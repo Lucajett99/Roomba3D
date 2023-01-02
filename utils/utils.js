@@ -1,3 +1,4 @@
+"use strict";
 //Raccoglie diverse funzioni come il caricamento di una texture da un'immqgine,
 // la crezione di una texture da applicarea allo skybox,
 // e tutto ciò che riguarda il caricamento di una mesh da un Obj
@@ -60,6 +61,7 @@ function loadSkyboxTexture() {
 }
 
 
+
 //Funzone per caricare una texture
 function loadTextureFromImg(imageSrc) {
     var texture = gl.createTexture();
@@ -73,23 +75,23 @@ function loadTextureFromImg(imageSrc) {
 	var textureImage = new Image();
 	textureImage.src = imageSrc;
 	textureImage.addEventListener('load', function() {
-		  // Now that the image has loaded make copy it to the texture.
-		  gl.bindTexture(gl.TEXTURE_2D, texture);
-          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-		  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, textureImage);
+        // Now that the image has loaded make copy it to the texture.
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, textureImage);
 		  
 		  // Check if the image is a power of 2 in both dimensions.
-		  if (isPowerOf2(textureImage.width) && isPowerOf2(textureImage.height)) {
-			 // Yes, it's a power of 2. Generate mips.
-			 gl.generateMipmap(gl.TEXTURE_2D);
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST	);
-		  } else {
-			 // No, it's not a power of 2. Turn off mips and set wrapping to clamp to edge
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);	//tell WebGL to not repeat the texture in S direction
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);	//tell WebGL to not repeat the texture in T direction
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		  }
+        if (isPowerOf2(textureImage.width) && isPowerOf2(textureImage.height)) {
+            // Yes, it's a power of 2. Generate mips.
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST	);
+        } else {
+            // No, it's not a power of 2. Turn off mips and set wrapping to clamp to edge
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);	//tell WebGL to not repeat the texture in S direction
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);	//tell WebGL to not repeat the texture in T direction
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        }
 	});
     return texture;
 }
@@ -165,33 +167,30 @@ function createTextureLight(){
 // MESH.OBJ 
 
 
-
+/*
 var webglVertexData = [
 	    [],   // positions
 	    [],   // texcoords
 	    [],   // normals
-];
+];*/
 
 function getObjToDraw(objsToDraw, name){
-
 	  return objsToDraw.find(x => x.name === name);
 }
 
 
 
-function loadObj(url) {
-	let xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {	
-		if (xhttp.readyState == 4) {
-			parseOBJ(xhttp.responseText);
-	   }
-	};
-	xhttp.open("GET", url, false);
-	xhttp.send(null);
+async function loadObj(url) {
+    const response = await fetch(url);
+    if(response.ok){
+        const text = await response.text();
+        return parseOBJ(text);
+    }
 }
 
+
 function parseOBJ(text) {
-	webglVertexData = [
+	var webglVertexData = [
 	    [],   // positions
 	    [],   // texcoords
 	    [],   // normals
@@ -275,15 +274,8 @@ function parseOBJ(text) {
 	handler(parts, unparsedArgs); //gestisce gli argomenti che non hai gestito
 	}
 
-	/*
-	var arrayProva = [];
-	for (let n = 0; n < objPositions.length; n++){
-		arrayProva.push(objPositions[n][2]);
-	}
-
-	//console.log(getMaxOfArray(arrayProva));
-	//console.log(getMinOfArray(arrayProva));
-	*/
+	return webglVertexData;
 }
 
-export {webglVertexData, depthFramebuffer, depthTexture, depthTextureSize, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+
+export {depthFramebuffer, depthTexture, depthTextureSize, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};

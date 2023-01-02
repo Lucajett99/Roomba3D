@@ -49,7 +49,9 @@ const roomba = new Roomba();
 const geometries = new Geometries();
 
 
-const main = () => {
+async function main () {
+    const meshProgramInfo = webglUtils.createProgramInfo(gl, [vertShader, fragShader]);
+
     //skybox program
     var skyboxProgramInfo = webglUtils.createProgramInfo(gl, [skyVertShader, skyFragShader])
 
@@ -70,14 +72,11 @@ const main = () => {
     image_frecce.src = "resources/images/frecce.png";
     image_frecce.addEventListener('load', function() {});
 
-    geometries.setGeo(gl);
+    await geometries.setGeo(gl);
     createTextureLight();
-    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
-
     update();
     window.requestAnimationFrame(update);
+    
 
     /*-----------------------------------------------------SEREI DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
@@ -97,9 +96,9 @@ const main = () => {
         window.requestAnimationFrame(update); // get next frame
     }
 
-
+    
     function render(time) { 
-        time*=0.001;
+        time *= 0.001;
         gl.enable(gl.DEPTH_TEST);
         // first draw from the POV of the light
         lightWorldMatrix = m4.lookAt(
@@ -178,10 +177,11 @@ const main = () => {
     function drawRoomba(ProgramInfo){
         let u_model4 = m4.scale(m4.translation(roomba.position.x, roomba.position.y, roomba.position.z), 3, 3, 3)
         u_model4 = m4.yRotate(u_model4, degToRad(roomba.facing))
-    // u_model4 = m4.yRotate(u_model4, degToRad(180));
+    //  u_model4 = m4.yRotate(u_model4, degToRad(180));
+
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.roomba.bufferInfo)
         webglUtils.setUniforms(ProgramInfo, {
-        // u_colorMult: [0.5, 0.5, 1, 1],
+            u_colorMult: [0.5, 0.5, 1, 1],
             u_world: u_model4,
             u_texture: geometries.roomba.texture,
         })
@@ -265,6 +265,20 @@ const main = () => {
         webglUtils.drawBufferInfo(gl, geometries.floor.bufferInfo)
     }
 
+    function drawVirus(ProgramInfo,time){
+        let u_model = m4.identity()
+        
+    //  u_model = m4.xRotate(u_model, 123)
+        u_model = m4.scale(m4.translation(-25, 5.5, -15), 5.5,5.5,5.5)
+        u_model = m4.yRotate(u_model, time)
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.mite.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_world: u_model,
+            u_texture: geometries.mite.texture,
+        })
+        webglUtils.drawBufferInfo(gl, geometries.mite.bufferInfo)
+    }
+
     function drawSkybox(gl, skyboxProgramInfo, view, projection) {
             gl.depthFunc(gl.LEQUAL) //non so perchè è necessario per lo skybox
 
@@ -318,7 +332,9 @@ const main = () => {
             });
         }
 
+        //geometries.roomba.drawObject(programInfo, {x: geometries.roomba.position.x, y: geometries.roomba.position.y, z: geometries.roomba.position.z});
         drawRoomba(programInfo)
+        drawVirus(programInfo)
         drawFloor(programInfo)
     }   
 }

@@ -1,12 +1,13 @@
-import { loadObj, loadTextureFromImg, webglVertexData, loadSkyboxTexture } from "./utils.js";
+import { loadObj, loadTextureFromImg, loadSkyboxTexture, degToRad } from "./utils.js";
 
 export class Obj {
-    constructor(canvas){
+    constructor(position){
+        this.position = position;
         this.bufferInfo = null;
         this.texture = null;
     }
 
-    loadObject(obj, texture) {
+    async loadObject(obj, texture) {
         if(obj == 'skybox') {
             this.#loadSkyBox();
             return;
@@ -16,7 +17,7 @@ export class Obj {
             return;
         }
         else {
-            loadObj(obj) //"resources/objs/roomba.obj"
+            const webglVertexData = await loadObj(obj);
             //TODO: capire come funziona questo array
             const obj_array = {
                 position: {numComponents: 3, data: webglVertexData[0],},
@@ -24,12 +25,26 @@ export class Obj {
                 normal: {numComponents: 3, data: webglVertexData[2],},
             }
             this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, obj_array);
-            this.texture = loadTextureFromImg(texture);
+            texture ? this.texture = loadTextureFromImg(texture) : null;
         }
     }
 
+    drawObject(ProgramInfo, position){
+        let u_model4 = m4.scale(m4.translation(position.x, position.y, position.z), 3, 3, 3)
+        u_model4 = m4.yRotate(u_model4, degToRad(this.facing))
+        //u_model4 = m4.yRotate(u_model4, degToRad(180));
+
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model4,
+            u_texture: this.texture,
+        })
+        webglUtils.drawBufferInfo(gl, this.bufferInfo)
+    }
+
     #loadFloor(texture) {
-		const S =70; 		
+		const S = 70; 		
 		const H = 0; 
 		const textureCoords = [ 0,0, 1,0, 0,1, 1,1,];
 
@@ -63,4 +78,5 @@ export class Obj {
        this.texture = loadSkyboxTexture();
     //console.log("bufferInfo_skybox", bufferInfo_skybox)
     }
+
 }

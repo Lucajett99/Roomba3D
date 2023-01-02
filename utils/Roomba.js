@@ -119,12 +119,24 @@ export class Roomba {
                     pacco=true;
                     
                     }*/
-        
+        switch(true) {
+            case (this.position.x >= 67.8):
+                this.position.x -= 2;
+                break;
+
+            case (this.position.x <= -67.8):
+                this.position.x += 2;
+                break;
+
+            case (this.position.z >= 67.7 ):
+                this.position.z -= 2;
+                break;
+
+            case (this.position.z <= -58.8):
+                this.position.z += 2;
+                break;
+        }
     
-        if (this.position.x >= 67.8 || this.position.x <= -67.8 || this.position.z >= 67.7 || this.position.z <= -58.8) {
-                this.position.x -= this.speed.x;
-                this.position.z -= this.speed.z;
-          }
           
     }
 
@@ -134,26 +146,18 @@ export class Roomba {
 			switch (event.key) {
                 case "w":
                     roomba.keyPressed.w = true;
-                    //roomba.speed.x += 0.15;
-                    //ball.position.x = ball.position.x + 0.1*ball.frictionX;
 					break;
 
                 case "s":
                     roomba.keyPressed.s = true;
-                    //roomba.speed.x -= 0.15;
-                    //ball.position.x = ball.position.x - 0.1*ball.frictionX;
                     break;
 
                 case "a":
                     roomba.keyPressed.a = true;
-                    //roomba.speed.y += 0.15;
-                    //ball.position.y = ball.position.y + 0.1*ball.frictionY;
                     break;
    
                 case "d":
                     roomba.keyPressed.d = true;
-                    //roomba.speed.y -= 0.15;
-                    //ball.position.y = ball.position.y - 0.1*ball.frictionY;
                     break; 
 			}
 		});
@@ -162,22 +166,18 @@ export class Roomba {
 			switch (event.key) {
                 case "w":
                     roomba.keyPressed.w = false;
-                    //ball.position.x = ball.position.x + 0.1*ball.frictionX;
 					break;
 
                 case "s":
                     roomba.keyPressed.s = false;
-                    //ball.position.x = ball.position.x - 0.1*ball.frictionX;
                     break;
 
                 case "a":
                     roomba.keyPressed.a = false;
-                    //ball.position.y = ball.position.y + 0.1*ball.frictionY;
                     break;
    
                 case "d":
                     roomba.keyPressed.d = false;
-                    //ball.position.y = ball.position.y - 0.1*ball.frictionY;
                     break; 
 			}
 		});

@@ -2,16 +2,17 @@ import { Obj } from "./Obj.js";
 
 export class Geometries {
     constructor(canvas) {
-        this.roomba = new Obj();
+        this.roomba = new Obj({x: 0, y: 0, z: 0});
         this.floor = new Obj();
         this.skybox = new Obj();
+        this.mite = new Obj();
     }
 
-    setGeo(gl) {
-        //this.roomba.loadObject("resources/objs/roomba.obj", "resources/images/roomba_texture.png");
-        this.loadMouse();
-        this.floor.loadObject("floor","resources/images/parquet_texture.jpg");
-        this.skybox.loadObject("skybox");
+    async setGeo(gl) {
+        await this.roomba.loadObject("resources/objs/roomba.obj", "resources/images/dark_texture.jpg");
+        await this.floor.loadObject("floor","resources/images/parquet_texture.jpg");
+        await this.skybox.loadObject("skybox");
+        await this.mite.loadObject("resources/objs/mite.obj", "resources/images/dark_texture.jpg");
     }
 }
 
