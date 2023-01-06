@@ -66,8 +66,45 @@ export class Roomba {
     }
 
 
-    #outOfBounds(){
-        /*if (this.position.x >= -31 && this.position.x <= -19 
+    #outOfBounds() {
+        switch(true) {
+            case (this.position.x >= 67.8):
+                this.position.x -= 2;
+                break;
+
+            case (this.position.x <= -67.8):
+                this.position.x += 2;
+                break;
+
+            case (this.position.z >= 67.7 ):
+                this.position.z -= 2;
+                break;
+
+            case (this.position.z <= -58.8):
+                this.position.z += 2;
+                break;
+        }
+    }
+
+    collisionChecker(mite_position) {
+        var mite1 = false;
+        var mite2 = false;
+        var mite3 = false;
+
+        if (this.position.x >= mite_position.x -6 && this.position.x <= mite_position.x + 6
+            && this.position.z >= mite_position.z -6 && this.position.z <= mite_position.z + 6) {
+            mite1 = true;
+        }
+        if (this.position.x >= mite_position.x + 4 && this.position.x <= mite_position.x + 16
+            && this.position.z >= mite_position.z + 1 && this.position.z <= mite_position.z + 11) {
+            mite2 = true;
+        }
+        if (this.position.x >= mite_position.x + 14 && this.position.x <= mite_position.x + 26
+            && this.position.z >= mite_position.z - 12 && this.position.z <= mite_position.z + 0) {
+            mite3 = true;
+        }
+        return {mite1, mite2, mite3};
+                /*if (this.position.x >= -31 && this.position.x <= -19 
             && this.position.z >= -21 && this.position.z <= -9) {
                 morte=1;
             }
@@ -111,32 +148,13 @@ export class Roomba {
             if (this.position.x >= -21 && this.position.x <= -9
                 && this.position.z >= 29 && this.position.z <= 41) {
                 cartella3=true;
-                
-                }
+            }
     
                 if (this.position.x >= -6 && this.position.x <= 6
                     && this.position.z >= -35 && this.position.z <= -23 && numcartella==3) {
                     pacco=true;
                     
-                    }*/
-        switch(true) {
-            case (this.position.x >= 67.8):
-                this.position.x -= 2;
-                break;
-
-            case (this.position.x <= -67.8):
-                this.position.x += 2;
-                break;
-
-            case (this.position.z >= 67.7 ):
-                this.position.z -= 2;
-                break;
-
-            case (this.position.z <= -58.8):
-                this.position.z += 2;
-                break;
-        }
-    
+                    }*/    
           
     }
 

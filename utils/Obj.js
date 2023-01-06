@@ -1,7 +1,7 @@
 import { loadObj, loadTextureFromImg, loadSkyboxTexture, degToRad } from "./utils.js";
 
 export class Obj {
-    constructor(position){
+    constructor(position = {x: 0, y: 0, z: 0}) {
         this.position = position;
         this.bufferInfo = null;
         this.texture = null;
@@ -27,20 +27,6 @@ export class Obj {
             this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, obj_array);
             texture ? this.texture = loadTextureFromImg(texture) : null;
         }
-    }
-
-    drawObject(ProgramInfo, position){
-        let u_model4 = m4.scale(m4.translation(position.x, position.y, position.z), 3, 3, 3)
-        u_model4 = m4.yRotate(u_model4, degToRad(this.facing))
-        //u_model4 = m4.yRotate(u_model4, degToRad(180));
-
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model4,
-            u_texture: this.texture,
-        })
-        webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
     #loadFloor(texture) {

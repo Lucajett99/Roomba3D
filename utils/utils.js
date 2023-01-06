@@ -20,12 +20,12 @@ function loadSkyboxTexture() {
     const texture = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
     
-	const faceInfos = [{target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'resources/images/parete.jpg',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'resources/images/parete.jpg',},
-	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'resources/images/parete.jpg',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'resources/images/parete.jpg',},
-	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'resources/images/parete.jpg',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'resources/images/parete.jpg',},
+	const faceInfos = [{target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'resources/images/background/px.png',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'resources/images/background/nx.png',},
+	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'resources/images/background/py.png',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'resources/images/background/ny.png',},
+	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'resources/images/background/pz.png',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'resources/images/background/nz.png',},
 	];
 
     faceInfos.forEach((faceInfo) => {
@@ -57,9 +57,8 @@ function loadSkyboxTexture() {
     gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
-    return texture
+    return texture;
 }
-
 
 
 //Funzone per caricare una texture
@@ -95,6 +94,11 @@ function loadTextureFromImg(imageSrc) {
 	});
     return texture;
 }
+
+
+
+
+
 
 
 
@@ -165,20 +169,6 @@ function createTextureLight(){
 
 //*********************************************************************************************************************
 // MESH.OBJ 
-
-
-/*
-var webglVertexData = [
-	    [],   // positions
-	    [],   // texcoords
-	    [],   // normals
-];*/
-
-function getObjToDraw(objsToDraw, name){
-	  return objsToDraw.find(x => x.name === name);
-}
-
-
 
 async function loadObj(url) {
     const response = await fetch(url);
@@ -277,5 +267,82 @@ function parseOBJ(text) {
 	return webglVertexData;
 }
 
+function drawTextInfo(){
+    const image_info = new Image();
+    image_info.src = "resources/images/background_info.jpg";
+    image_info.addEventListener('load', function() {});
 
-export {depthFramebuffer, depthTexture, depthTextureSize, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+    const image_wasd= new Image(); 
+    image_wasd.src = "resources/images/wasd.png";
+    image_wasd.addEventListener('load', function() {});
+
+    const image_frecce = new Image();
+    image_frecce.src = "resources/images/frecce.png";
+    image_frecce.addEventListener('load', function() {});
+
+    if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
+    ctx.drawImage(wasd_keys, 80, 330);
+    ctx.drawImage(freccie, 540, 330);  
+    //ctx.drawImage(button1, 300, 450);
+    //ctx.drawImage(button3, 440, 450);  
+    ctx.drawImage(image_info, 871.5, 17);
+    } 
+    else{ctx.drawImage(image_info, 871.5, 1);}
+    //testo
+    ctx.font = '14pt Calibri';
+    ctx.fillStyle = 'black';
+    ctx.fillText("Prova a raccogliere tutti", 880, 50);
+    ctx.fillText("i parassiti ", 880, 70);
+    ctx.font = '14pt Calibri';
+    ctx.fillStyle = 'red';
+    var parassiti_raccolti  = 0;
+    if (parassiti_raccolti == 3){
+        ctx.fillStyle = 'green';
+        ctx.fillText("          Complimenti!!!!!", 880, 100);
+        ctx.fillText("    Hai raccolto tutti i parassiti", 880, 120);
+        ctx.font = '14pt Calibri'; 
+        ctx.fillStyle = 'red';
+        ctx.fillText("      Hai fatto infuriare il boss dei parassiti!", 880, 190);
+    }
+    else
+        ctx.fillText(`Parassiti da raccogliere ${3 - parassiti_raccolti }`, 880, 100)
+        
+    /*if (pacco==true){
+        ctx.fillStyle = 'green';
+        ctx.fillText("    Grazie per aver recuperato", 880, 230);
+        ctx.fillText("    tutti i preziosi documenti!!", 880, 250);
+    }*/
+
+    ctx.font = '12pt Calibri';
+    ctx.fillStyle = 'purple';
+    ctx.fillText("Attenzione evita i pezzi di ferro per ", 880, 140);
+    ctx.fillText("non rompere Roomba", 880, 160);
+    ctx.font = '10pt Calibri';
+    ctx.fillStyle = 'black';
+    ctx.fillText("----------------------------------------------------------", 871, 270);
+    ctx.font = '16pt Calibri';
+    ctx.fillStyle = 'red';
+    ctx.fillText("	             CONTROLLI 		", 870, 290);
+    ctx.font = '13pt Calibri';
+    ctx.fillStyle = 'black';
+    ctx.fillText("          Controllo movimento", 880, 310);
+    ctx.font = '12pt Calibri';
+    ctx.fillText("          W avanti            A sinistra", 880, 330); 
+    ctx.fillText("          S indietro          D destra", 880, 350); 
+    ctx.font = '13pt Calibri';
+    ctx.fillText("Controllo movimento camera", 880, 380);
+    ctx.fillText("con le freccie direzionali ⇑⇓⇒⇐", 880, 400); 
+    ctx.fillText("o con il movimento del mouse", 880, 420);
+    ctx.font = '13pt Calibri';
+    ctx.fillText("Puoi avvicinare e allontare la", 880, 440); 
+    ctx.fillText("camera con la rotella del mouse", 880, 460); 
+    
+/*if(morte==1){  
+        ctx.drawImage(matrix,0,0,text.clientWidth,text.clientHeight);
+        ctx.drawImage(retry,480, 175);
+    }*/
+}
+
+
+
+export {depthFramebuffer, depthTexture, depthTextureSize, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};

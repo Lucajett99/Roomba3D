@@ -17,13 +17,10 @@
     <canvas width="1100" height="500" id="myCanvas"></canvas>
   </div>
 
-  <!--
   <div id="uiContainer">
-    <div id="LightX"></div>
-    <div id="LightY"></div>
-    <div id="LightZ"></div>
 
     <div id="shadowOpt">
+      <!--
       <div>
         <input type="radio" id="shadowRadio" name="shadow" value="4" onclick="texture_enable=true">
         <label for="shadow4">Render con ombre</label>
@@ -32,17 +29,19 @@
         <input type="radio" id="shadowRadio" name="shadow" value="5" onclick="texture_enable=false" checked>
         <label for="shadow5">Render senza ombre</label>
       </div>
-      <div id="bottoni">
-        <div id="visuale">
-          <h2>Cambia Visuale </h2>
+      -->
+        <div id="bottoni">
+            <div id="visuale">
+                <h2>Cambia Visuale </h2>
+            </div>
+            <input type="button" id="button_camera_posteriore" value="Posteriore"
+            onclick="cambiaCamera=false; cameraLiberabis = false; cameraAlto=false; cameraLibera=false; camera_posteriore=true">
+            <input type="button" id="button_camera_anteriore" value="Anteriore"
+            onclick="cambiaCamera=true;cameraLiberabis = false;cameraAlto=false;cameraLibera=false;camera_posteriore=true">
+            <input type="button" id="button_camera_alta" value="Dall'alto" onclick="cameraAlto=true;cameraLiberabis = false;camera_posteriore=true">
+            <input type="button" id="button_camera_tv" value="Tv" onclick="cameraTV=true">
         </div>
-        <input type="button" id="button1" value="Posteriore"
-          onclick="cambiaCamera=false;cameraLiberabis = false;cameraAlto=false; cameraLibera=false; camera_posteriore=true">
-        <input type="button" id="button2" value="Anteriore"
-          onclick="cambiaCamera=true;cameraLiberabis = false;cameraAlto=false;cameraLibera=false;camera_posteriore=true">
-        <input type="button" id="button3" value="Dall'alto" onclick="cameraAlto=true;cameraLiberabis = false;camera_posteriore=true">
-      </div>
-    </div>-->
+    </div>
 </body>
 
 <script>

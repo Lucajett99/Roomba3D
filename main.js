@@ -1,16 +1,12 @@
-import {vertShader, fragShader, skyVertShader, skyFragShader, sunVertShader, sunFragShader, colorVertShader, colorFragShader} from './utils/shaders.js';
+import { skyVertShader, skyFragShader, sunVertShader, sunFragShader, colorVertShader, colorFragShader } from './utils/shaders.js';
 import { Roomba } from './utils/Roomba.js';
 import { Geometries } from './utils/Geometries.js';
-import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize } from './utils/utils.js';
+import { Camera } from './utils/Camera.js';
+import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawTextInfo } from './utils/utils.js';
 "use strict";
 
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
-//var texture_enable=true;
-let cameraTarget = [0, 0, 0]     //eye location of the camera dove guardiamo
-let cameraPosition = [0, 0, 0] 
-var camera_posteriore=true;
-var cambiaCamera=false;
-var cameraAlto=false;
+//var texture_enable=true
 
 var n_step = 0;
 var timeNow = 0;
@@ -28,14 +24,12 @@ var fovLight = 12;
 var lightIntensity= 2.5;
 var shadowIntensity=0.9;
 
-var cameraLiberabis = false;
-var cameraLibera = false; // drag del mouse
 var drag;
 var bias = -0.00005;
 const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
 const fieldOfViewRadians = degToRad(60); 
 
-let up = [0, 1, 0]  //se cambia up, ruota l'intero SDR, quindi cambiano gli assi
+const up = [0, 1, 0]  //se cambia up, ruota l'intero SDR, quindi cambiano gli assi
 const PHYS_SAMPLING_STEP = 20; 
 var doneSomething = false; 
 
@@ -45,13 +39,13 @@ var lightProjectionMatrix;
 var projectionMatrix;
 var cameraMatrix;
 
+const camera = new Camera();
 const roomba = new Roomba();
 const geometries = new Geometries();
 
 
 async function main () {
-    const meshProgramInfo = webglUtils.createProgramInfo(gl, [vertShader, fragShader]);
-
+    var mite1, mite2, mite3 = false;
     //skybox program
     var skyboxProgramInfo = webglUtils.createProgramInfo(gl, [skyVertShader, skyFragShader])
 
@@ -60,17 +54,17 @@ async function main () {
 
     var colorProgramInfo = webglUtils.createProgramInfo(gl, [colorVertShader, colorFragShader])
 
-    const image_info = new Image();
-    image_info.src = "resources/images/background_info.jpg";
-    image_info.addEventListener('load', function() {});
+    const button_camera_anteriore = document.getElementById("button_camera_anteriore");
+    button_camera_anteriore.addEventListener("click", camera.change_cameraAnteriore);
 
-    const image_wasd= new Image(); 
-    image_wasd.src = "resources/images/wasd.png";
-    image_wasd.addEventListener('load', function() {});
+    const button_camera_posteriore = document.getElementById("button_camera_posteriore");
+    button_camera_posteriore.addEventListener("click", camera.change_cameraPosteriore);
 
-    const image_frecce = new Image();
-    image_frecce.src = "resources/images/frecce.png";
-    image_frecce.addEventListener('load', function() {});
+    const button_camera_alta = document.getElementById("button_camera_alta");
+    button_camera_alta.addEventListener("click", camera.change_cameraAlta);
+
+    const button_camera_tv = document.getElementById("button_camera_tv");
+    button_camera_tv.addEventListener("click", camera.change_cameraTv);
 
     await geometries.setGeo(gl);
     createTextureLight();
@@ -78,7 +72,7 @@ async function main () {
     window.requestAnimationFrame(update);
     
 
-    /*-----------------------------------------------------SEREI DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
+    /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
         if(n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
             roomba.moveRoomba(); 
@@ -137,39 +131,42 @@ async function main () {
         var projection = m4.perspective(fieldOfViewRadians, aspect, 0.1, 1200);
 
         // Compute the camera's matrix using look at.
-        var camera = m4.lookAt(cameraPosition, cameraTarget, up);
+        var myCamera = camera.createCamera();
 
         // Make a view matrix from the camera matrix.
-        var view = m4.inverse(camera);
+        var view = m4.inverse(myCamera);
 
         const posX = roomba.position.x;
         const posY = roomba.position.y;
         const posZ = roomba.position.z;
         const facing = roomba.facing;
 
-
-        if (camera_posteriore){
-            cameraPosition = [posX +(D*Math.sin(degToRad(facing))), posY+7, posZ+(D*Math.cos(degToRad(facing)))]            
+        if (camera.camera_posteriore){
+            camera.position = [posX +(D*Math.sin(degToRad(facing))), posY+7, posZ+(D*Math.cos(degToRad(facing)))]            
         }
 
-        if(cameraLiberabis){
-            cameraPosition = [D*1.5*Math.sin(PHI)*Math.cos(THETA),D*1.5*Math.sin(PHI)*Math.sin(THETA),D*1.5*Math.cos(PHI)];
+        if(camera.cameraLiberabis){
+            camera.position = [D*1.5*Math.sin(PHI)*Math.cos(THETA),D*1.5*Math.sin(PHI)*Math.sin(THETA),D*1.5*Math.cos(PHI)];
         }
 
-        if(cambiaCamera && !cameraLiberabis){   
-            cameraPosition = [posX+(-D*Math.sin(degToRad(facing))), posY+20, posZ+(-D*Math.cos(degToRad(facing)))];		
+        if(camera.cambiaCamera && !camera.cameraLiberabis){ 
+            camera.position = [posX+(-D*Math.sin(degToRad(facing))), posY+20, posZ+(-D*Math.cos(degToRad(facing)))];		
         }
 
-        if (cameraAlto){
-            cameraPosition=[0,105,2];
+        if (camera.cameraAlta){
+            camera.position = [0,105,2];
         }
             
-        if(!cameraAlto){
-            cameraTarget = [posX, posY, posZ]}
+        if(!camera.cameraAlta){
+            camera.target = [posX, posY, posZ]}
         else{
-            cameraTarget = [0,0,0];
+            camera.target = [0,0,0];
         }
-        drawScene(projection,camera, textureMatrix, lightWorldMatrix, sunProgramInfo,time);
+
+        if(camera.cameraTv){
+            camera.position = [geometries.sofa.position.x, geometries.sofa.position.y+7,geometries.sofa.position.z-10];
+        }
+        drawScene(projection, myCamera, textureMatrix, lightWorldMatrix, sunProgramInfo,time);
         drawSkybox(gl, skyboxProgramInfo, view, projection)
         drawTextInfo();
     }
@@ -186,74 +183,12 @@ async function main () {
             u_texture: geometries.roomba.texture,
         })
         webglUtils.drawBufferInfo(gl, geometries.roomba.bufferInfo)
+        const collisions = roomba.collisionChecker(geometries.mite.position);
+        mite1 = mite1 ? mite1 : collisions.mite1;
+        mite2 = mite2 ? mite2 : collisions.mite2;
+        mite3 = mite3 ? mite3 : collisions.mite3;
     }
-
-
-    function drawTextInfo(){
-        if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-        ctx.drawImage(wasd_keys, 80, 330);
-        ctx.drawImage(freccie, 540, 330);  
-        //ctx.drawImage(button1, 300, 450);
-        //ctx.drawImage(button3, 440, 450);  
-        ctx.drawImage(image_info, 871.5, 17);
-        } 
-        else{ctx.drawImage(image_info, 871.5, 1);}
-        //testo
-        ctx.font = '14pt Calibri';
-        ctx.fillStyle = 'black';
-        ctx.fillText("Prova a raccogliere tutta", 880, 50);
-        ctx.fillText("la polvere ", 880, 70);
-        ctx.font = '14pt Calibri';
-        ctx.fillStyle = 'red';
-        //numcartella=cartella1+cartella2+cartella3;
-        var numcartella = 0;
-        if ((numcartella)==3){
-            ctx.fillStyle = 'green';
-            ctx.fillText("          Complimenti!!!!!", 880, 100);
-            ctx.fillText("    Hai raccolto tutte le cartelle", 880, 120);
-            ctx.font = '14pt Calibri'; 
-            ctx.fillStyle = 'red';
-            ctx.fillText("      Hai fatto infuriare il boss!", 880, 190);
-            ctx.fillText("Cosa nasconde alle sue spalle?", 880, 210);
-        }
-        else
-            ctx.fillText(`Cartelle da raccogliere ${3-numcartella}`, 880, 100)
-            
-        /*if (pacco==true){
-            ctx.fillStyle = 'green';
-            ctx.fillText("    Grazie per aver recuperato", 880, 230);
-            ctx.fillText("    tutti i preziosi documenti!!", 880, 250);
-        }*/
-
-        ctx.font = '12pt Calibri';
-        ctx.fillStyle = 'purple';
-        ctx.fillText("Attenzione evita i virus rotanti per ", 880, 140);
-        ctx.fillText("non rimetterci i circuiti", 880, 160);
-        ctx.font = '10pt Calibri';
-        ctx.fillStyle = 'black';
-        ctx.fillText("----------------------------------------------------------", 871, 270);
-        ctx.font = '16pt Calibri';
-        ctx.fillStyle = 'red';
-        ctx.fillText("	             CONTROLLI 		", 870, 290);
-        ctx.font = '13pt Calibri';
-        ctx.fillStyle = 'black';
-        ctx.fillText("          Controllo movimento", 880, 310);
-        ctx.font = '12pt Calibri';
-        ctx.fillText("          W avanti            A sinistra", 880, 330); 
-        ctx.fillText("          S indietro          D destra", 880, 350); 
-        ctx.font = '13pt Calibri';
-        ctx.fillText("Controllo movimento camera", 880, 380);
-        ctx.fillText("con le freccie direzionali ⇑⇓⇒⇐", 880, 400); 
-        ctx.fillText("o con il movimento del mouse", 880, 420);
-        ctx.font = '13pt Calibri';
-        ctx.fillText("Puoi avvicinare e allontare la", 880, 440); 
-        ctx.fillText("camera con la rotella del mouse", 880, 460); 
-        
-    /*if(morte==1){  
-            ctx.drawImage(matrix,0,0,text.clientWidth,text.clientHeight);
-            ctx.drawImage(retry,480, 175);
-        }*/
-    }
+    
 
     function drawFloor(ProgramInfo){
         let u_modelfloor = m4.identity()
@@ -265,14 +200,60 @@ async function main () {
         webglUtils.drawBufferInfo(gl, geometries.floor.bufferInfo)
     }
 
-    function drawVirus(ProgramInfo,time){
-        let u_model = m4.identity()
-        
-    //  u_model = m4.xRotate(u_model, 123)
-        u_model = m4.scale(m4.translation(-25, 5.5, -15), 5.5,5.5,5.5)
-        u_model = m4.yRotate(u_model, time)
+    function drawTable(ProgramInfo){
+        let u_model = m4.scale(m4.translation(geometries.table.position.x, geometries.table.position.y, geometries.table.position.z), 1, 2, 1)
+        //u_model = m4.yRotate(u_model, time);
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.table.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model,
+            u_texture: geometries.table.texture,
+        })
+        webglUtils.drawBufferInfo(gl, geometries.table.bufferInfo)
+    }
+
+    function drawSofa(ProgramInfo){
+        let u_model = m4.scale(m4.translation(geometries.sofa.position.x, geometries.sofa.position.y, geometries.sofa.position.z), 15, 30, 20);
+        u_model = m4.yRotate(u_model, degToRad(180));
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.sofa.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model,
+            u_texture: geometries.sofa.texture,
+        })
+        webglUtils.drawBufferInfo(gl, geometries.sofa.bufferInfo)
+    }
+
+    function drawCabinet(ProgramInfo){
+        let u_model = m4.scale(m4.translation(geometries.cabinet.position.x, geometries.cabinet.position.y, geometries.cabinet.position.z), 1, 1, 1);
+        //u_model = m4.yRotate(u_model, degToRad(180));
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.cabinet.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model,
+            u_texture: geometries.cabinet.texture,
+        })
+        webglUtils.drawBufferInfo(gl, geometries.cabinet.bufferInfo)
+    }
+
+    function drawTv(ProgramInfo){
+        let u_model = m4.scale(m4.translation(geometries.tv.position.x, geometries.tv.position.y, geometries.tv.position.z), 10, 10, 10);
+        //u_model = m4.yRotate(u_model, degToRad(180));
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.tv.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model,
+            u_texture: geometries.tv.texture,
+        })
+        webglUtils.drawBufferInfo(gl, geometries.tv.bufferInfo)
+    }
+
+    function drawMite(ProgramInfo, time, position){
+        let u_model = m4.scale(m4.translation(position.x, position.y, position.z), 4, 4, 4)
+        u_model = m4.yRotate(u_model, time);
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.mite.bufferInfo)
         webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
             u_world: u_model,
             u_texture: geometries.mite.texture,
         })
@@ -332,11 +313,20 @@ async function main () {
             });
         }
 
+        const mite_position = geometries.mite.position;
+
         //geometries.roomba.drawObject(programInfo, {x: geometries.roomba.position.x, y: geometries.roomba.position.y, z: geometries.roomba.position.z});
-        drawRoomba(programInfo)
-        drawVirus(programInfo)
-        drawFloor(programInfo)
-    }   
+        
+        drawFloor(programInfo);
+        drawRoomba(programInfo);
+        drawTable(programInfo);
+        drawSofa(programInfo);
+        drawCabinet(programInfo);
+        drawTv(programInfo);
+        if(!mite1) drawMite(programInfo, time, mite_position);
+        if(!mite2) drawMite(programInfo, time, {x: mite_position.x + 10, y: mite_position.y, z: mite_position.z + 5});
+        if(!mite3) drawMite(programInfo, time, {x: mite_position.x + 20, y: mite_position.y, z: mite_position.z - 6});
+    }  
 }
 
 
