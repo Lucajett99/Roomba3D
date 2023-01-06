@@ -10,7 +10,6 @@ import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawT
 
 var n_step = 0;
 var timeNow = 0;
-var D = 17;
 
 var x_light = 10;
 var y_light= 200;
@@ -45,7 +44,8 @@ const geometries = new Geometries();
 
 
 async function main () {
-    var mite1, mite2, mite3 = false;
+    var mites = [false, false, false];
+    var fine = false;
     //skybox program
     var skyboxProgramInfo = webglUtils.createProgramInfo(gl, [skyVertShader, skyFragShader])
 
@@ -67,7 +67,7 @@ async function main () {
     button_camera_tv.addEventListener("click", camera.change_cameraTv);
 
     await geometries.setGeo(gl);
-    createTextureLight();
+    //createTextureLight();
     update();
     window.requestAnimationFrame(update);
     
@@ -141,31 +141,13 @@ async function main () {
         const posZ = roomba.position.z;
         const facing = roomba.facing;
 
-        if (camera.camera_posteriore){
-            camera.position = [posX +(D*Math.sin(degToRad(facing))), posY+7, posZ+(D*Math.cos(degToRad(facing)))]            
-        }
+        camera.updateCamera(posX, posY, posZ, facing);
 
+        /*
         if(camera.cameraLiberabis){
             camera.position = [D*1.5*Math.sin(PHI)*Math.cos(THETA),D*1.5*Math.sin(PHI)*Math.sin(THETA),D*1.5*Math.cos(PHI)];
         }
-
-        if(camera.cambiaCamera && !camera.cameraLiberabis){ 
-            camera.position = [posX+(-D*Math.sin(degToRad(facing))), posY+20, posZ+(-D*Math.cos(degToRad(facing)))];		
-        }
-
-        if (camera.cameraAlta){
-            camera.position = [0,105,2];
-        }
-            
-        if(!camera.cameraAlta){
-            camera.target = [posX, posY, posZ]}
-        else{
-            camera.target = [0,0,0];
-        }
-
-        if(camera.cameraTv){
-            camera.position = [geometries.sofa.position.x, geometries.sofa.position.y+7,geometries.sofa.position.z-10];
-        }
+        }*/
         drawScene(projection, myCamera, textureMatrix, lightWorldMatrix, sunProgramInfo,time);
         drawSkybox(gl, skyboxProgramInfo, view, projection)
         drawTextInfo();
@@ -183,10 +165,11 @@ async function main () {
             u_texture: geometries.roomba.texture,
         })
         webglUtils.drawBufferInfo(gl, geometries.roomba.bufferInfo)
-        const collisions = roomba.collisionChecker(geometries.mite.position);
-        mite1 = mite1 ? mite1 : collisions.mite1;
-        mite2 = mite2 ? mite2 : collisions.mite2;
-        mite3 = mite3 ? mite3 : collisions.mite3;
+        const collisions = roomba.collisionChecker(geometries.mites[0].position, geometries.debris[0].position);
+        mites[0] = mites[0] ? mites[0] : collisions.mite1;
+        mites[1] = mites[1] ? mites[1] : collisions.mite2;
+        mites[2] = mites[2] ? mites[2] : collisions.mite3;
+        fine = fine ? fine : collisions.fine;
     }
     
 
@@ -198,66 +181,6 @@ async function main () {
             u_texture: geometries.floor.texture,
         })
         webglUtils.drawBufferInfo(gl, geometries.floor.bufferInfo)
-    }
-
-    function drawTable(ProgramInfo){
-        let u_model = m4.scale(m4.translation(geometries.table.position.x, geometries.table.position.y, geometries.table.position.z), 1, 2, 1)
-        //u_model = m4.yRotate(u_model, time);
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.table.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model,
-            u_texture: geometries.table.texture,
-        })
-        webglUtils.drawBufferInfo(gl, geometries.table.bufferInfo)
-    }
-
-    function drawSofa(ProgramInfo){
-        let u_model = m4.scale(m4.translation(geometries.sofa.position.x, geometries.sofa.position.y, geometries.sofa.position.z), 15, 30, 20);
-        u_model = m4.yRotate(u_model, degToRad(180));
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.sofa.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model,
-            u_texture: geometries.sofa.texture,
-        })
-        webglUtils.drawBufferInfo(gl, geometries.sofa.bufferInfo)
-    }
-
-    function drawCabinet(ProgramInfo){
-        let u_model = m4.scale(m4.translation(geometries.cabinet.position.x, geometries.cabinet.position.y, geometries.cabinet.position.z), 1, 1, 1);
-        //u_model = m4.yRotate(u_model, degToRad(180));
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.cabinet.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model,
-            u_texture: geometries.cabinet.texture,
-        })
-        webglUtils.drawBufferInfo(gl, geometries.cabinet.bufferInfo)
-    }
-
-    function drawTv(ProgramInfo){
-        let u_model = m4.scale(m4.translation(geometries.tv.position.x, geometries.tv.position.y, geometries.tv.position.z), 10, 10, 10);
-        //u_model = m4.yRotate(u_model, degToRad(180));
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.tv.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model,
-            u_texture: geometries.tv.texture,
-        })
-        webglUtils.drawBufferInfo(gl, geometries.tv.bufferInfo)
-    }
-
-    function drawMite(ProgramInfo, time, position){
-        let u_model = m4.scale(m4.translation(position.x, position.y, position.z), 4, 4, 4)
-        u_model = m4.yRotate(u_model, time);
-        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, geometries.mite.bufferInfo)
-        webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
-            u_world: u_model,
-            u_texture: geometries.mite.texture,
-        })
-        webglUtils.drawBufferInfo(gl, geometries.mite.bufferInfo)
     }
 
     function drawSkybox(gl, skyboxProgramInfo, view, projection) {
@@ -312,20 +235,20 @@ async function main () {
                 u_shadowIntensity: shadowIntensity,
             });
         }
-
-        const mite_position = geometries.mite.position;
-
-        //geometries.roomba.drawObject(programInfo, {x: geometries.roomba.position.x, y: geometries.roomba.position.y, z: geometries.roomba.position.z});
-        
+       
         drawFloor(programInfo);
         drawRoomba(programInfo);
-        drawTable(programInfo);
-        drawSofa(programInfo);
-        drawCabinet(programInfo);
-        drawTv(programInfo);
-        if(!mite1) drawMite(programInfo, time, mite_position);
-        if(!mite2) drawMite(programInfo, time, {x: mite_position.x + 10, y: mite_position.y, z: mite_position.z + 5});
-        if(!mite3) drawMite(programInfo, time, {x: mite_position.x + 20, y: mite_position.y, z: mite_position.z - 6});
+        geometries.table.drawObject(programInfo, {x: 1, y: 2, z: 1});
+        geometries.sofa.drawObject(programInfo, {x: 15, y: 30, z: 20}, degToRad(180));
+        geometries.cabinet.drawObject(programInfo, {x: 1, y: 1, z: 1});
+        geometries.tv.drawObject(programInfo, {x: 10, y: 10, z: 10});
+        //geometries.debris.drawObject(programInfo, {x: 10, y: 1, z: 10});
+        for (let mite in geometries.mites) {
+            if(!mites[mite]) geometries.mites[mite].drawObject(programInfo, {x: 4, y: 4, z: 4}, time);
+        }
+        for (let debris in geometries.debris) {
+            geometries.debris[debris].drawObject(programInfo, {x: 10, y: 5, z: 10});
+        }
     }  
 }
 

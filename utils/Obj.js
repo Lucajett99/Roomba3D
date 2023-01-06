@@ -29,6 +29,18 @@ export class Obj {
         }
     }
 
+    drawObject(ProgramInfo, scale, rotation = 0){
+        let u_model = m4.scale(m4.translation(this.position.x, this.position.y, this.position.z), scale.x, scale.y, scale.z)
+        u_model = m4.yRotate(u_model, rotation);
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_colorMult: [0.5, 0.5, 1, 1],
+            u_world: u_model,
+            u_texture: this.texture,
+        })
+        webglUtils.drawBufferInfo(gl, this.bufferInfo)
+    }
+
     #loadFloor(texture) {
 		const S = 70; 		
 		const H = 0; 

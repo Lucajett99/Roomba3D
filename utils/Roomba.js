@@ -17,7 +17,7 @@ export class Roomba {
         this.velRitornoSterzo = 0.84; // B, sterzo massimo = A*B / (1-B)
         
         //Dict to track which key is being pressed
-        this.keyPressed = { w: false, a: false, s: false, d: false}
+        this.keyPressed = { w: false, a: false, s: false, d: false }
 
     }
 
@@ -86,10 +86,11 @@ export class Roomba {
         }
     }
 
-    collisionChecker(mite_position) {
+    collisionChecker(mite_position, debris_position) {
         var mite1 = false;
         var mite2 = false;
         var mite3 = false;
+        var fine = false;
 
         if (this.position.x >= mite_position.x -6 && this.position.x <= mite_position.x + 6
             && this.position.z >= mite_position.z -6 && this.position.z <= mite_position.z + 6) {
@@ -103,7 +104,22 @@ export class Roomba {
             && this.position.z >= mite_position.z - 12 && this.position.z <= mite_position.z + 0) {
             mite3 = true;
         }
-        return {mite1, mite2, mite3};
+        if (this.position.x >= debris_position.x - 6 && this.position.x <= debris_position.x + 6
+            && this.position.z >= debris_position.z - 6 && this.position.z <= debris_position.z + 6) {
+            fine = true;
+        }
+        if (this.position.x >= debris_position.x + 4 && this.position.x <= debris_position.x + 16
+            && this.position.z >= debris_position.z + 1 && this.position.z <= debris_position.z + 11) {
+            fine = true;
+        }
+        if (this.position.x >= debris_position.x + 14 && this.position.x <= debris_position.x + 26
+            && this.position.z >= debris_position.z - 12 && this.position.z <= debris_position.z + 0) {
+            fine = true;
+        }
+
+
+
+        return {mite1, mite2, mite3, fine};
                 /*if (this.position.x >= -31 && this.position.x <= -19 
             && this.position.z >= -21 && this.position.z <= -9) {
                 morte=1;
