@@ -1,6 +1,6 @@
+const floor_bound = {x1: 67.8, x2: -67.8, z1: 67.7, z2: -67.7};
 //The friction value is a value in the range [0,1]. The friction controls the percentage of speed preserved 
 //Smaller value results in bigger friction, larger value results in smaller friction    
-
 export class Roomba {
     constructor(canvas){
         this.position = {x: 0, y: 0, z: 0}; // x, y, z 
@@ -8,17 +8,13 @@ export class Roomba {
         this.friction = {x: 0.8, y: 1, z: 0.99 }; //grande attrito sulla X, nullo sulla y, piccolo sulla z
         this.facing = 0;
         this.steering = 0;
-        
+        this.n_step = 0;
         this.maxAcceleration  = 0.005;
-
         this.grip = 0.35; // quanto il facing macchina si adegua velocemente allo sterzo
-
         this.velSterzo = 3.2;         // A
         this.velRitornoSterzo = 0.84; // B, sterzo massimo = A*B / (1-B)
-        
         //Dict to track which key is being pressed
         this.keyPressed = { w: false, a: false, s: false, d: false }
-
     }
 
     //Do a physics step, independent from the rendering. 
@@ -57,69 +53,48 @@ export class Roomba {
         
         
        
-        //Update position as position = position + velocity * delta t (delta t constant)
-        this.position.x += this.speed.x;
-        this.position.y += this.speed.y;
-        this.position.z += this.speed.z;
-        
-        this.#outOfBounds();
-    }
-
-
-    #outOfBounds() {
-        switch(true) {
-            case (this.position.x >= 67.8):
-                this.position.x -= 2;
-                break;
-
-            case (this.position.x <= -67.8):
-                this.position.x += 2;
-                break;
-
-            case (this.position.z >= 67.7 ):
-                this.position.z -= 2;
-                break;
-
-            case (this.position.z <= -58.8):
-                this.position.z += 2;
-                break;
+        if(this.#checkBound("x", floor_bound) && this.#checkBound("z", floor_bound)) {
+            //Update position as position = position + velocity * delta t (delta t constant)
+            this.position.x += this.speed.x;
+            this.position.y += this.speed.y;
+            this.position.z += this.speed.z;
         }
     }
 
-    collisionChecker(mite_position, debris_position) {
-        var mite1 = false;
-        var mite2 = false;
-        var mite3 = false;
+
+    #checkBound(axis, boundCoords) {
+        switch(axis) {
+            case "x":
+                return this.position.x + this.speed.x <= boundCoords.x1 && this.position.x + this.speed.x >= boundCoords.x2;
+            case "z":
+                return this.position.z + this.speed.z <= boundCoords.z1 && this.position.z + this.speed.z >= boundCoords.z2;
+            default:
+                return false;
+        }
+    }
+    
+
+    collisionChecker(mites_position, debris_position) {
+        var mites = [false, false, false];
         var fine = false;
 
-        if (this.position.x >= mite_position.x -6 && this.position.x <= mite_position.x + 6
-            && this.position.z >= mite_position.z -6 && this.position.z <= mite_position.z + 6) {
-            mite1 = true;
+        for(let i = 0; i<mites_position.length; i++) {
+            if (this.position.x >= mites_position[i].x -6 && this.position.x <= mites_position[i].x + 6
+                && this.position.z >= mites_position[i].z -6 && this.position.z <= mites_position[i].z + 6) {
+                mites[i] = true;
+            }
         }
-        if (this.position.x >= mite_position.x + 4 && this.position.x <= mite_position.x + 16
-            && this.position.z >= mite_position.z + 1 && this.position.z <= mite_position.z + 11) {
-            mite2 = true;
-        }
-        if (this.position.x >= mite_position.x + 14 && this.position.x <= mite_position.x + 26
-            && this.position.z >= mite_position.z - 12 && this.position.z <= mite_position.z + 0) {
-            mite3 = true;
-        }
-        if (this.position.x >= debris_position.x - 6 && this.position.x <= debris_position.x + 6
-            && this.position.z >= debris_position.z - 6 && this.position.z <= debris_position.z + 6) {
-            fine = true;
-        }
-        if (this.position.x >= debris_position.x + 4 && this.position.x <= debris_position.x + 16
-            && this.position.z >= debris_position.z + 1 && this.position.z <= debris_position.z + 11) {
-            fine = true;
-        }
-        if (this.position.x >= debris_position.x + 14 && this.position.x <= debris_position.x + 26
-            && this.position.z >= debris_position.z - 12 && this.position.z <= debris_position.z + 0) {
-            fine = true;
+
+        for(let i = 0; i < debris_position.length; i++) {
+            if (this.position.x >= debris_position[i].x - 3 && this.position.x <= debris_position[i].x + 3
+                && this.position.z >= debris_position[i].z - 3 && this.position.z <= debris_position[i].z + 3) {
+                fine = true;
+            }
         }
 
 
 
-        return {mite1, mite2, mite3, fine};
+        return {mites, fine};
                 /*if (this.position.x >= -31 && this.position.x <= -19 
             && this.position.z >= -21 && this.position.z <= -9) {
                 morte=1;

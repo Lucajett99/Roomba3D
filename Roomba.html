@@ -18,28 +18,33 @@
   </div>
 
   <div id="uiContainer">
-
     <div id="shadowOpt">
-      <!--
-      <div>
+      <!-- <div>
         <input type="radio" id="shadowRadio" name="shadow" value="4" onclick="texture_enable=true">
         <label for="shadow4">Render con ombre</label>
       </div>
       <div>
         <input type="radio" id="shadowRadio" name="shadow" value="5" onclick="texture_enable=false" checked>
         <label for="shadow5">Render senza ombre</label>
-      </div>
-      -->
+      </div>  -->
         <div id="bottoni">
             <div id="visuale">
-                <h2>Cambia Visuale </h2>
+                <h2>Cambia Camera </h2>
             </div>
             <input type="button" id="button_camera_posteriore" value="Posteriore"
             onclick="cambiaCamera=false; cameraLiberabis = false; cameraAlto=false; cameraLibera=false; camera_posteriore=true">
             <input type="button" id="button_camera_anteriore" value="Anteriore"
             onclick="cambiaCamera=true;cameraLiberabis = false;cameraAlto=false;cameraLibera=false;camera_posteriore=true">
             <input type="button" id="button_camera_alta" value="Dall'alto" onclick="cameraAlto=true;cameraLiberabis = false;camera_posteriore=true">
-            <input type="button" id="button_camera_tv" value="Tv" onclick="cameraTV=true">
+            <input type="button" id="button_camera_tv" value="TV" onclick="cameraTV=true">
+        </div>
+        <div id="lightManipulation">
+            <div id="visuale">
+                <h2>Cambia Luci </h2>
+            </div>
+            <div id="LightX"></div>
+            <div id="LightY"></div>
+            <div id="LightZ"></div>
         </div>
     </div>
 </body>

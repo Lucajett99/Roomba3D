@@ -2,13 +2,13 @@ import { skyVertShader, skyFragShader, sunVertShader, sunFragShader, colorVertSh
 import { Roomba } from './utils/Roomba.js';
 import { Geometries } from './utils/Geometries.js';
 import { Camera } from './utils/Camera.js';
-import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawTextInfo } from './utils/utils.js';
+import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawTextInfo, drawFine } from './utils/utils.js';
 "use strict";
 
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
 //var texture_enable=true
 
-var n_step = 0;
+
 var timeNow = 0;
 
 var x_light = 10;
@@ -42,6 +42,21 @@ const camera = new Camera();
 const roomba = new Roomba();
 const geometries = new Geometries();
 
+function updateLightx(event, ui){
+    x_light= ui.value;
+
+}
+
+function updateLighty(event, ui){
+    y_light= ui.value;
+
+}
+
+function updateLightz(event, ui){
+    z_light= ui.value;
+
+}
+
 
 async function main () {
     var mites = [false, false, false];
@@ -67,17 +82,20 @@ async function main () {
     button_camera_tv.addEventListener("click", camera.change_cameraTv);
 
     await geometries.setGeo(gl);
-    //createTextureLight();
+    createTextureLight();
+    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
     update();
     window.requestAnimationFrame(update);
     
 
     /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
-        if(n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
+        if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
             roomba.moveRoomba(); 
             roomba.setRoombaControl(canvas, roomba);
-            n_step++; 
+            roomba.n_step = roomba.n_step + 1; 
             doneSomething = true;
             window.requestAnimationFrame(update);
             return; // return as there is nothing to do
@@ -150,7 +168,7 @@ async function main () {
         }*/
         drawScene(projection, myCamera, textureMatrix, lightWorldMatrix, sunProgramInfo,time);
         drawSkybox(gl, skyboxProgramInfo, view, projection)
-        drawTextInfo();
+        fine ? drawFine() : drawTextInfo();
     }
 
     function drawRoomba(ProgramInfo){
@@ -165,10 +183,12 @@ async function main () {
             u_texture: geometries.roomba.texture,
         })
         webglUtils.drawBufferInfo(gl, geometries.roomba.bufferInfo)
-        const collisions = roomba.collisionChecker(geometries.mites[0].position, geometries.debris[0].position);
-        mites[0] = mites[0] ? mites[0] : collisions.mite1;
-        mites[1] = mites[1] ? mites[1] : collisions.mite2;
-        mites[2] = mites[2] ? mites[2] : collisions.mite3;
+        const mites_position = [geometries.mites[0].position, geometries.mites[1].position, geometries.mites[2].position];
+        const debris_position = [geometries.debris[0].position, geometries.debris[1].position, geometries.debris[2].position];
+        const collisions = roomba.collisionChecker(mites_position, debris_position);
+        mites[0] = mites[0] ? mites[0] : collisions.mites[0];
+        mites[1] = mites[1] ? mites[1] : collisions.mites[1];
+        mites[2] = mites[2] ? mites[2] : collisions.mites[2];
         fine = fine ? fine : collisions.fine;
     }
     

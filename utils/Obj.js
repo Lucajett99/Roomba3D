@@ -1,18 +1,19 @@
 import { loadObj, loadTextureFromImg, loadSkyboxTexture, degToRad } from "./utils.js";
 
 export class Obj {
-    constructor(position = {x: 0, y: 0, z: 0}) {
+    constructor(name, position = {x: 0, y: 0, z: 0}) {
+        this.name = name;
         this.position = position;
         this.bufferInfo = null;
         this.texture = null;
     }
 
     async loadObject(obj, texture) {
-        if(obj == 'skybox') {
+        if(this.name == 'skybox') {
             this.#loadSkyBox();
             return;
         }
-        else if(obj == 'floor') {
+        else if(this.name == 'floor') {
             this.#loadFloor(texture);
             return;
         }

@@ -267,6 +267,14 @@ function parseOBJ(text) {
 	return webglVertexData;
 }
 
+
+function drawFine(){
+    const game_over = new Image();
+    game_over.src = "resources/images/game_over.png";
+    game_over.addEventListener('load', function() {});
+    ctx.drawImage(game_over, 0, 0, text.clientWidth, text.clientHeight);
+}
+
 function drawTextInfo(){
     const image_info = new Image();
     image_info.src = "resources/images/background_info.jpg";
@@ -336,13 +344,8 @@ function drawTextInfo(){
     ctx.font = '13pt Calibri';
     ctx.fillText("Puoi avvicinare e allontare la", 880, 440); 
     ctx.fillText("camera con la rotella del mouse", 880, 460); 
-    
-/*if(morte==1){  
-        ctx.drawImage(matrix,0,0,text.clientWidth,text.clientHeight);
-        ctx.drawImage(retry,480, 175);
-    }*/
 }
 
 
 
-export {depthFramebuffer, depthTexture, depthTextureSize, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+export {depthFramebuffer, depthTexture, depthTextureSize, drawFine, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};

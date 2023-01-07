@@ -34,7 +34,7 @@ export class Camera {
             const x = 30;
             const y = 12;
             const z = -20;
-            this.position = [x + (D * Math.sin(degToRad(0))), y + 10, z + (D*Math.cos(degToRad(0)))];
+            this.position = [x + (D * Math.sin(degToRad(1))), y + 10, z + (D*Math.cos(degToRad(1)))];
             this.target = [x, y + 4, z];
         }
     }
