@@ -2,7 +2,7 @@ import { skyVertShader, skyFragShader, sunVertShader, sunFragShader, colorVertSh
 import { Roomba } from './utils/Roomba.js';
 import { Geometries } from './utils/Geometries.js';
 import { Camera } from './utils/Camera.js';
-import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawTextInfo, drawFine } from './utils/utils.js';
+import { createTextureLight, degToRad, depthFramebuffer, depthTextureSize, drawTextInfo, drawGameover, drawWin } from './utils/utils.js';
 "use strict";
 
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
@@ -59,8 +59,6 @@ function updateLightz(event, ui){
 
 
 async function main () {
-    var mites = [false, false, false];
-    var fine = false;
     //skybox program
     var skyboxProgramInfo = webglUtils.createProgramInfo(gl, [skyVertShader, skyFragShader])
 
@@ -68,6 +66,22 @@ async function main () {
     var sunProgramInfo = webglUtils.createProgramInfo(gl, [sunVertShader, sunFragShader])
 
     var colorProgramInfo = webglUtils.createProgramInfo(gl, [colorVertShader, colorFragShader])
+
+    await geometries.setGeo(gl);
+    createTextureLight();
+    
+    /*const h2 = document.createElement("h2");
+    const node = document.createTextNode("Cambia Luci");
+    h2.appendChild(node);
+    const title = document.getElementById("visuale_manipulation");
+    title.appendChild(h2);*/
+
+    const manipulation_div = document.getElementById('manipulation');
+    manipulation_div.innerHTML = " <div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale_manipulation'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> </div> ";
+
+    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
 
     const button_camera_anteriore = document.getElementById("button_camera_anteriore");
     button_camera_anteriore.addEventListener("click", camera.change_cameraAnteriore);
@@ -80,32 +94,31 @@ async function main () {
 
     const button_camera_tv = document.getElementById("button_camera_tv");
     button_camera_tv.addEventListener("click", camera.change_cameraTv);
-
-    await geometries.setGeo(gl);
-    createTextureLight();
-    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
     update();
     window.requestAnimationFrame(update);
     
 
     /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
-        if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
-            roomba.moveRoomba(); 
-            roomba.setRoombaControl(canvas, roomba);
-            roomba.n_step = roomba.n_step + 1; 
-            doneSomething = true;
-            window.requestAnimationFrame(update);
-            return; // return as there is nothing to do
+        if(geometries.bossInfo.lifes > 0) {
+            if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
+                roomba.moveRoomba(); 
+                roomba.setRoombaControl(canvas, roomba);
+                roomba.n_step = roomba.n_step + 1; 
+                doneSomething = true;
+                window.requestAnimationFrame(update);
+                return; // return as there is nothing to do
+            }
+            timeNow = time;   
+            if (doneSomething) {	
+                render(time);   
+                doneSomething = false;
+            }
+            window.requestAnimationFrame(update); // get next frame
         }
-        timeNow = time;   
-        if (doneSomething) {	
-            render(time);   
-            doneSomething = false;
-        }
-        window.requestAnimationFrame(update); // get next frame
+        else 
+            drawWin();
+        
     }
 
     
@@ -168,7 +181,7 @@ async function main () {
         }*/
         drawScene(projection, myCamera, textureMatrix, lightWorldMatrix, sunProgramInfo,time);
         drawSkybox(gl, skyboxProgramInfo, view, projection)
-        fine ? drawFine() : drawTextInfo();
+        geometries.gameover ? drawGameover() : drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
     }
 
     function drawRoomba(ProgramInfo){
@@ -183,13 +196,9 @@ async function main () {
             u_texture: geometries.roomba.texture,
         })
         webglUtils.drawBufferInfo(gl, geometries.roomba.bufferInfo)
-        const mites_position = [geometries.mites[0].position, geometries.mites[1].position, geometries.mites[2].position];
-        const debris_position = [geometries.debris[0].position, geometries.debris[1].position, geometries.debris[2].position];
-        const collisions = roomba.collisionChecker(mites_position, debris_position);
-        mites[0] = mites[0] ? mites[0] : collisions.mites[0];
-        mites[1] = mites[1] ? mites[1] : collisions.mites[1];
-        mites[2] = mites[2] ? mites[2] : collisions.mites[2];
-        fine = fine ? fine : collisions.fine;
+        //check the evolution of the game
+        geometries.updateGame(roomba);
+
     }
     
 
@@ -262,12 +271,20 @@ async function main () {
         geometries.sofa.drawObject(programInfo, {x: 15, y: 30, z: 20}, degToRad(180));
         geometries.cabinet.drawObject(programInfo, {x: 1, y: 1, z: 1});
         geometries.tv.drawObject(programInfo, {x: 10, y: 10, z: 10});
-        //geometries.debris.drawObject(programInfo, {x: 10, y: 1, z: 10});
-        for (let mite in geometries.mites) {
-            if(!mites[mite]) geometries.mites[mite].drawObject(programInfo, {x: 4, y: 4, z: 4}, time);
-        }
-        for (let debris in geometries.debris) {
-            geometries.debris[debris].drawObject(programInfo, {x: 10, y: 5, z: 10});
+        if(!geometries.bossInfo.final) {
+            for (let mite in geometries.mites) {
+                if(!geometries.checkMites[mite]) geometries.mites[mite].drawObject(programInfo, {x: 2.5, y: 2.5, z: 2.5}, time);
+            }
+            for (let debris in geometries.debris) {
+                geometries.debris[debris].drawObject(programInfo, {x: 10, y: 5, z: 10});
+            }
+        } else {
+            if(geometries.bossInfo.lifes > 0) {
+                for (let debris in geometries.debris) {
+                    geometries.debris[debris].drawObject(programInfo, {x: 10, y: 5, z: 10});
+                }
+                geometries.bossMite[geometries.bossInfo.lifes - 1].drawObject(programInfo, {x: 20, y: 20, z: 20}, time);
+            }
         }
     }  
 }

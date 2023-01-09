@@ -74,9 +74,13 @@ export class Roomba {
     }
     
 
-    collisionChecker(mites_position, debris_position) {
-        var mites = [false, false, false];
-        var fine = false;
+    collisionChecker(mites_position, debris_position, bossPosition) {
+        const mites = [];
+        var gameover = false;
+        var boss = false;
+        mites_position.forEach(index => {
+            mites.push(false);
+        });
 
         for(let i = 0; i<mites_position.length; i++) {
             if (this.position.x >= mites_position[i].x -6 && this.position.x <= mites_position[i].x + 6
@@ -88,13 +92,17 @@ export class Roomba {
         for(let i = 0; i < debris_position.length; i++) {
             if (this.position.x >= debris_position[i].x - 3 && this.position.x <= debris_position[i].x + 3
                 && this.position.z >= debris_position[i].z - 3 && this.position.z <= debris_position[i].z + 3) {
-                fine = true;
+                gameover = true;
             }
         }
 
-
-
-        return {mites, fine};
+        if(bossPosition) {
+            if (this.position.x >= bossPosition.x - 10 && this.position.x <= bossPosition.x + 10
+                && this.position.z >= bossPosition.z - 10 && this.position.z <= bossPosition.z + 10) {
+                boss = true;
+            }
+        }
+        return {mites, gameover, boss};
                 /*if (this.position.x >= -31 && this.position.x <= -19 
             && this.position.z >= -21 && this.position.z <= -9) {
                 morte=1;

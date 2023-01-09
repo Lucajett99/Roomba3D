@@ -42,6 +42,12 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
+    changePosition(x, y, z) {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+    }
+
     #loadFloor(texture) {
 		const S = 70; 		
 		const H = 0; 

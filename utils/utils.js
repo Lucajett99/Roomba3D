@@ -267,17 +267,40 @@ function parseOBJ(text) {
 	return webglVertexData;
 }
 
+function getManipulationPanel() {
+    const manipulation_div = document.getElementById('manipulation');
+    manipulation_div.innerHTML = " <div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale_manipulation'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> </div> ";
 
-function drawFine(){
+    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
+}
+
+function drawWin(){
+    const winner = new Image();
+    winner.src = "resources/images/white_background.png";
+    winner.addEventListener('load', function() {});
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(winner, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.font = '50pt Copperplate';
+    ctx.fillStyle = 'black';
+    ctx.fillText("COMPLIMENTI, HAI VINTO!!", 100,250);
+}
+
+function drawGameover(){
     const game_over = new Image();
     game_over.src = "resources/images/game_over.png";
     game_over.addEventListener('load', function() {});
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(game_over, 0, 0, text.clientWidth, text.clientHeight);
 }
 
-function drawTextInfo(){
+function drawTextInfo(parassiti, bossLife){
+    const n_parassiti = parassiti.length;
+    const parassiti_raccolti = parassiti.filter(value => value === true).length;
+
     const image_info = new Image();
-    image_info.src = "resources/images/background_info.jpg";
+    image_info.src = "resources/images/background_info2.png";
     image_info.addEventListener('load', function() {});
 
     const image_wasd= new Image(); 
@@ -297,55 +320,57 @@ function drawTextInfo(){
     } 
     else{ctx.drawImage(image_info, 871.5, 1);}
     //testo
-    ctx.font = '14pt Calibri';
+    ctx.font = '14pt Copperplate';
     ctx.fillStyle = 'black';
     ctx.fillText("Prova a raccogliere tutti", 880, 50);
     ctx.fillText("i parassiti ", 880, 70);
-    ctx.font = '14pt Calibri';
+    ctx.font = '14pt Copperplate';
     ctx.fillStyle = 'red';
-    var parassiti_raccolti  = 0;
-    if (parassiti_raccolti == 3){
+    if (parassiti_raccolti == n_parassiti){
         ctx.fillStyle = 'green';
-        ctx.fillText("          Complimenti!!!!!", 880, 100);
-        ctx.fillText("    Hai raccolto tutti i parassiti", 880, 120);
-        ctx.font = '14pt Calibri'; 
+        ctx.fillText("    Complimenti!!!!!", 880, 100);
+        ctx.fillText("  Hai raccolto tutti i parassiti", 880, 120);
+        ctx.font = '14pt Copperplate'; 
         ctx.fillStyle = 'red';
-        ctx.fillText("      Hai fatto infuriare il boss dei parassiti!", 880, 190);
+        ctx.fillText(" Hai fatto infuriare il boss dei parassiti!", 880, 190);
+        ctx.fillText("    (ATTENTO HA 3 VITE E SI TELETRASPORTA!)", 880, 210);
+        ctx.fillText(`Vite del Boss: ${bossLife}`, 880, 230)
+    }
+    else if(bossLife == 0) {
+        ctx.fillStyle = 'green';
+        ctx.fillText("    Grazie per aver aspirato tutti i parassiti  ", 880, 100);
     }
     else
-        ctx.fillText(`Parassiti da raccogliere ${3 - parassiti_raccolti }`, 880, 100)
-        
-    /*if (pacco==true){
-        ctx.fillStyle = 'green';
-        ctx.fillText("    Grazie per aver recuperato", 880, 230);
-        ctx.fillText("    tutti i preziosi documenti!!", 880, 250);
-    }*/
+        ctx.fillText(`Parassiti da raccogliere ${n_parassiti - parassiti_raccolti}`, 880, 100)
+    
+    
 
-    ctx.font = '12pt Calibri';
+
+    ctx.font = '12pt Copperplate';
     ctx.fillStyle = 'purple';
     ctx.fillText("Attenzione evita i pezzi di ferro per ", 880, 140);
     ctx.fillText("non rompere Roomba", 880, 160);
-    ctx.font = '10pt Calibri';
-    ctx.fillStyle = 'black';
+    ctx.font = '10pt Copperplate';
+    ctx.fillStyle = 'Copperplate';
     ctx.fillText("----------------------------------------------------------", 871, 270);
-    ctx.font = '16pt Calibri';
+    ctx.font = '16pt Copperplate';
     ctx.fillStyle = 'red';
     ctx.fillText("	             CONTROLLI 		", 870, 290);
-    ctx.font = '13pt Calibri';
+    ctx.font = '13pt Copperplate';
     ctx.fillStyle = 'black';
     ctx.fillText("          Controllo movimento", 880, 310);
-    ctx.font = '12pt Calibri';
+    ctx.font = '12pt Copperplate';
     ctx.fillText("          W avanti            A sinistra", 880, 330); 
     ctx.fillText("          S indietro          D destra", 880, 350); 
-    ctx.font = '13pt Calibri';
+    ctx.font = '13pt Copperplate';
     ctx.fillText("Controllo movimento camera", 880, 380);
     ctx.fillText("con le freccie direzionali ⇑⇓⇒⇐", 880, 400); 
     ctx.fillText("o con il movimento del mouse", 880, 420);
-    ctx.font = '13pt Calibri';
+    ctx.font = '13pt Copperplate';
     ctx.fillText("Puoi avvicinare e allontare la", 880, 440); 
     ctx.fillText("camera con la rotella del mouse", 880, 460); 
 }
 
 
 
-export {depthFramebuffer, depthTexture, depthTextureSize, drawFine, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+export {depthFramebuffer, depthTexture, depthTextureSize, getManipulationPanel, drawWin, drawGameover, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};

@@ -4,13 +4,23 @@ export class Geometries {
     constructor(canvas) {
         this.roomba = new Obj("roomba");
         this.floor = new Obj("floor");
-        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: -30, y: 0, z: -30}), new Obj("mite3", {x: -20, y: 0, z: -41})]; 
-        this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: 5, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50})];
+        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
+        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
+        //this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -41}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: -10, y: 0, z: 30})];
+        this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
+        this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: 5, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
         this.table = new Obj("table", {x: -30, y: 0, z: 30}); 
         this.sofa = new Obj("sofa", {x: 30, y: 0, z: 30});
         this.cabinet = new Obj("tv_cabinet", {x: 30, y: 0, z: -25});
         this.tv = new Obj("tv", {x: 30, y: 12, z: -20});
         this.skybox = new Obj("skybox");
+
+        this.bossInfo = {final: false, lifes: this.bossMite.length};
+        this.checkMites = [];
+        for(let i = 0; i < this.mites.length; i++) {
+            this.checkMites.push(false);
+        }
+        this.gameover = false;
     }
 
     async setGeo(gl) {
@@ -27,35 +37,31 @@ export class Geometries {
         for (let debris of this.debris) {
             await debris.loadObject("resources/objs/detriti.obj", "resources/images/iron_texture.jpg");
         }
+        for (let bossMite of this.bossMite) {
+            await bossMite.loadObject("resources/objs/mite.obj", "resources/images/dark_texture.jpg");
+        }
+    }
+
+    updateGame(roomba) {
+        //check the evolution of the game
+        const mites_position = [];
+        const debris_position = [];
+        for(let mite in this.mites) {
+            mites_position.push(this.mites[mite].position);
+        }
+        for(let debris in this.debris) {
+            debris_position.push(this.debris[debris].position);
+        }
+        const life = this.bossInfo.lifes - 1;
+        const collisions = roomba.collisionChecker(mites_position, debris_position, this.bossInfo.final &&  life >= 0 ? this.bossMite[life].position : null);
+        this.checkMites.forEach((mite, index) => {
+            this.checkMites[index] = this.checkMites[index] ? this.checkMites[index] : collisions.mites[index];
+        })
+        if(this.bossInfo.final) {
+            if(collisions.boss)
+                this.bossInfo.lifes -= 1;
+        }
+        this.gameover = this.gameover ? this.gameover : collisions.gameover;
+        this.bossInfo.final = this.checkMites.every(element => element === true) && !this.gameover;
     }
 }
-
-
-
-/*
-function loadRoomba() {
-    loadObj("resources/objs/roomba.obj")
-    //TODO: capire come funziona questo array
-    const roomba_array = {
-        position: {numComponents: 3, data: webglVertexData[0],},
-        texcoord: {numComponents: 2, data: webglVertexData[1],},
-        normal: {numComponents: 3, data: webglVertexData[2],},
-    }
-    roomba.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, roomba_array);
-    //roomba.texture = loadTextureFromImg("resources/images/roomba_texture.png")
-    console.log(roomba)
-}
-*/
-/*
-function drawMouse(ProgramInfo){
-    let u_model4 = m4.scale(m4.translation(posX, posY, posZ), 3, 3, 3)
-    u_model4 = m4.yRotate(u_model4, degToRad(facing))
-   // u_model4 = m4.yRotate(u_model4, degToRad(180));
-    webglUtils.setBuffersAndAttributes(gl, ProgramInfo, bufferInfo_mouse)
-    webglUtils.setUniforms(ProgramInfo, {
-       // u_colorMult: [0.5, 0.5, 1, 1],
-        u_world: u_model4,
-        u_texture: texture_mouse,
-    })
-    webglUtils.drawBufferInfo(gl, bufferInfo_mouse)
-}*/
