@@ -30,7 +30,7 @@ export class Obj {
         }
     }
 
-    drawObject(ProgramInfo, scale, rotation = 0){
+    drawObject = (ProgramInfo, scale, rotation = 0) => {
         let u_model = m4.scale(m4.translation(this.position.x, this.position.y, this.position.z), scale.x, scale.y, scale.z)
         u_model = m4.yRotate(u_model, rotation);
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
@@ -39,13 +39,23 @@ export class Obj {
             u_world: u_model,
             u_texture: this.texture,
         })
-        webglUtils.drawBufferInfo(gl, this.bufferInfo)
+        webglUtils.drawBufferInfo(gl, this.bufferInfo);
     }
 
     changePosition(x, y, z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
+    }
+
+    drawFloor(ProgramInfo){
+        let u_modelfloor = m4.identity()
+        webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
+        webglUtils.setUniforms(ProgramInfo, {
+            u_world: u_modelfloor,
+            u_texture: this.texture,
+        })
+        webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
     #loadFloor(texture) {
@@ -64,6 +74,27 @@ export class Obj {
 		this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, arrays_floor);
         this.texture = loadTextureFromImg(texture)
         //console.log("bufferInfo_florr", bufferInfo_floor)
+    }
+
+    drawSkybox(gl, skyboxProgramInfo, view, projection) {
+        gl.depthFunc(gl.LEQUAL) //non so perchè è necessario per lo skybox
+
+        const viewMatrix = m4.copy(view);
+
+        // remove translations
+        viewMatrix[12] = 0;
+        viewMatrix[13] = 0;
+        viewMatrix[14] = 0;
+
+        let viewDirectionProjectionMatrix = m4.multiply(projection, viewMatrix)
+        let viewDirectionProjectionInverse = m4.inverse(viewDirectionProjectionMatrix)
+        gl.useProgram(skyboxProgramInfo.program);
+        webglUtils.setBuffersAndAttributes(gl, skyboxProgramInfo, this.bufferInfo)
+        webglUtils.setUniforms(skyboxProgramInfo, {
+            u_viewDirectionProjectionInverse: viewDirectionProjectionInverse,
+            u_skybox: this.texture,
+        })
+        webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
     #loadSkyBox(){

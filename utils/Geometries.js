@@ -4,10 +4,10 @@ export class Geometries {
     constructor(canvas) {
         this.roomba = new Obj("roomba");
         this.floor = new Obj("floor");
-        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
-        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
-        //this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -41}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: -10, y: 0, z: 30})];
-        this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
+        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
+        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
+        this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -41}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: -10, y: 0, z: 30})];
+        //this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
         this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: 5, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
         this.table = new Obj("table", {x: -30, y: 0, z: 30}); 
         this.sofa = new Obj("sofa", {x: 30, y: 0, z: 30});
@@ -41,9 +41,18 @@ export class Geometries {
             await bossMite.loadObject("resources/objs/mite.obj", "resources/images/dark_texture.jpg");
         }
     }
-
-    updateGame(roomba) {
+    
+    checkRender() {
+        return this.bossInfo.lifes > 0 && !this.gameover;
+    }
+    
+    checkWinGame() {
+        return this.bossInfo.final && this.bossInfo.lifes <= 0 && !this.gameover;
+    }
+    
+    updateGame = (roomba) => {
         //check the evolution of the game
+        //check if roomba had collisions
         const mites_position = [];
         const debris_position = [];
         for(let mite in this.mites) {
@@ -64,4 +73,5 @@ export class Geometries {
         this.gameover = this.gameover ? this.gameover : collisions.gameover;
         this.bossInfo.final = this.checkMites.every(element => element === true) && !this.gameover;
     }
+
 }

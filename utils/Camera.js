@@ -5,10 +5,11 @@ export class Camera {
     constructor() {
         this.position = [0, 0, 0] //l'oggetto che la camera sta guardando
         this.target = [0, 0, 0]  //la posizione della camera;
-        this.cameraAnteriore = false;
+        
         this.cameraPosteriore = true;
+        this.cameraAnteriore = false;
         this.cameraAlta = false;
-        this.cameraLibera = false;
+        //this.cameraLibera = false;
         this.cameraTv = false;
     }
     

@@ -55,7 +55,7 @@ const fragShader = `
 //SKYBOX SHADERS 
 const skyVertShader = `
     attribute vec4 a_position;
-    
+
     varying vec4 v_position;
     
     void main() {
@@ -63,7 +63,7 @@ const skyVertShader = `
         gl_Position = a_position;
         gl_Position.z = 1.0;
     }
-   `;
+`;
 
 const skyFragShader = `
     precision mediump float;

@@ -105,7 +105,6 @@ function loadTextureFromImg(imageSrc) {
 var depthFramebuffer, depthTextureSize, depthTexture, unusedTexture;
 //funzione per creare depth framebuffer
 function createTextureLight(){
-
 	depthTexture = gl.createTexture();
 	depthTextureSize = 1024;
 	gl.bindTexture(gl.TEXTURE_2D, depthTexture);
@@ -269,22 +268,25 @@ function parseOBJ(text) {
 
 function getManipulationPanel() {
     const manipulation_div = document.getElementById('manipulation');
-    manipulation_div.innerHTML = " <div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale_manipulation'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> </div> ";
-
-    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightY", {value: 200, slide: updateLighty, min: 100, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: updateLightz, min: 100, max: 350, step: 1});
+    manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
 }
 
 function drawWin(){
+    /*window.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            repeat();
+            event.preventDefault();
+        }
+   });*/
     const winner = new Image();
     winner.src = "resources/images/white_background.png";
     winner.addEventListener('load', function() {});
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(winner, 0, 0, text.clientWidth, text.clientHeight);
-    ctx.font = '50pt Copperplate';
+    ctx.font = '50pt Bowlby One SC';
     ctx.fillStyle = 'black';
-    ctx.fillText("COMPLIMENTI, HAI VINTO!!", 100,250);
+    ctx.fillText("COMPLIMENTI", 290, 190);
+    ctx.fillText("    HAI VINTO ", 290, 290);
 }
 
 function drawGameover(){

@@ -80,7 +80,6 @@
     `;
     var valueElem = parent.querySelector(".gman-widget-value");
     var sliderElem = parent.querySelector(".gman-widget-slider");
-
     function updateValue(value) {
       valueElem.textContent = (value * step * uiMult).toFixed(uiPrecision);
     }

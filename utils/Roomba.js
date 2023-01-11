@@ -52,28 +52,24 @@ export class Roomba {
         this.speed.z = -sinf * roombaSpeed.x + cosf * roombaSpeed.z;
         
         
-       
+        let x = this.position.x;
+        let y = this.position.y;
+        let z = this.position.z;
         if(this.#checkBound("x", floor_bound) && this.#checkBound("z", floor_bound)) {
             //Update position as position = position + velocity * delta t (delta t constant)
-            this.position.x += this.speed.x;
-            this.position.y += this.speed.y;
-            this.position.z += this.speed.z;
+            this.position.x = x = this.position.x + this.speed.x;
+            this.position.y = y = this.position.y + this.speed.y;
+            this.position.z = z = this.position.z + this.speed.z;
         }
+        //console.log(x)
+        return {x: x, y: y, z: z};
     }
 
-
-    #checkBound(axis, boundCoords) {
-        switch(axis) {
-            case "x":
-                return this.position.x + this.speed.x <= boundCoords.x1 && this.position.x + this.speed.x >= boundCoords.x2;
-            case "z":
-                return this.position.z + this.speed.z <= boundCoords.z1 && this.position.z + this.speed.z >= boundCoords.z2;
-            default:
-                return false;
-        }
-    }
     
 
+
+    
+    
     collisionChecker(mites_position, debris_position, bossPosition) {
         const mites = [];
         var gameover = false;
@@ -85,8 +81,8 @@ export class Roomba {
         for(let i = 0; i<mites_position.length; i++) {
             if (this.position.x >= mites_position[i].x -6 && this.position.x <= mites_position[i].x + 6
                 && this.position.z >= mites_position[i].z -6 && this.position.z <= mites_position[i].z + 6) {
-                mites[i] = true;
-            }
+                    mites[i] = true;
+                }
         }
 
         for(let i = 0; i < debris_position.length; i++) {
@@ -95,38 +91,38 @@ export class Roomba {
                 gameover = true;
             }
         }
-
+        
         if(bossPosition) {
             if (this.position.x >= bossPosition.x - 10 && this.position.x <= bossPosition.x + 10
                 && this.position.z >= bossPosition.z - 10 && this.position.z <= bossPosition.z + 10) {
-                boss = true;
+                    boss = true;
+                }
             }
-        }
-        return {mites, gameover, boss};
+            return {mites, gameover, boss};
                 /*if (this.position.x >= -31 && this.position.x <= -19 
-            && this.position.z >= -21 && this.position.z <= -9) {
-                morte=1;
-            }
-    
-        if (this.position.x >= 29 && this.position.x <= 41
+                    && this.position.z >= -21 && this.position.z <= -9) {
+                        morte=1;
+                    }
+                    
+                    if (this.position.x >= 29 && this.position.x <= 41
             && this.position.z >= 14 && this.position.z <= 26) {
                 morte=1;
                 
             }
-    
+            
             if (this.position.x >= 6 && this.position.x <= 18
                 && this.position.z >= -16 && this.position.z <= -4) {
                     morte=1;
                     
                 }
     
-        if (this.position.x >= 3 && this.position.x <= 17.5
-            && this.position.z >= 23 && this.position.z <= 36.5) {
+                if (this.position.x >= 3 && this.position.x <= 17.5
+                    && this.position.z >= 23 && this.position.z <= 36.5) {
                 morte=1;
                 
             }
     
-        if (this.position.x >= -5.5 && this.position.x <= 5
+            if (this.position.x >= -5.5 && this.position.x <= 5
             && this.position.z >= -15 && this.position.z <= -4
             && cartella1==true && cartella2==true && cartella3==true) {
                 morte=1;
@@ -141,63 +137,72 @@ export class Roomba {
             && this.position.z >= -14 && this.position.z <= -2) {
             cartella2=true;
             
-            }
-            
-           
+        }
+        
+        
             if (this.position.x >= -21 && this.position.x <= -9
                 && this.position.z >= 29 && this.position.z <= 41) {
-                cartella3=true;
+                    cartella3=true;
             }
-    
-                if (this.position.x >= -6 && this.position.x <= 6
+            
+            if (this.position.x >= -6 && this.position.x <= 6
                     && this.position.z >= -35 && this.position.z <= -23 && numcartella==3) {
-                    pacco=true;
+                        pacco=true;
                     
                     }*/    
-          
-    }
+                    
+                }
+                
+                
+                setRoombaControl(canvas, roomba){
+                    window.addEventListener("keydown", function (event) {
+                        switch (event.key) {
+                            case "w":
+                                roomba.keyPressed.w = true;
+                                break;
+                            case "s":
+                                roomba.keyPressed.s = true;
+                                break;
 
-
-    setRoombaControl(canvas, roomba){
-        window.addEventListener("keydown", function (event) {
-			switch (event.key) {
-                case "w":
-                    roomba.keyPressed.w = true;
-					break;
-
-                case "s":
-                    roomba.keyPressed.s = true;
-                    break;
-
-                case "a":
-                    roomba.keyPressed.a = true;
-                    break;
-   
-                case "d":
-                    roomba.keyPressed.d = true;
-                    break; 
-			}
+                            case "a":
+                                roomba.keyPressed.a = true;
+                                break;
+                            case "d":
+                                roomba.keyPressed.d = true;
+                            break; 
+                }
 		});
-
+        
         window.addEventListener("keyup", function (event) {
-			switch (event.key) {
+            switch (event.key) {
                 case "w":
                     roomba.keyPressed.w = false;
 					break;
+                    
+                    case "s":
+                        roomba.keyPressed.s = false;
+                        break;
 
-                case "s":
-                    roomba.keyPressed.s = false;
+                        case "a":
+                            roomba.keyPressed.a = false;
                     break;
-
-                case "a":
-                    roomba.keyPressed.a = false;
-                    break;
-   
+                    
                 case "d":
                     roomba.keyPressed.d = false;
                     break; 
-			}
-		});
+                }
+            });
+            
+    }
 
+    #checkBound(axis, boundCoords) {
+        switch(axis) {
+            case "x":
+                return this.position.x + this.speed.x <= boundCoords.x1 && this.position.x + this.speed.x >= boundCoords.x2;
+            case "z":
+                return this.position.z + this.speed.z <= boundCoords.z1 && this.position.z + this.speed.z >= boundCoords.z2;
+            default:
+                return false;
+        }
     }
 }
