@@ -54,33 +54,27 @@ async function main () {
     switch_shadow.addEventListener('change', () => {shadow_enable = !shadow_enable;});
 
     update();
-    var animation = window.requestAnimationFrame(update);
+    const animation = window.requestAnimationFrame(update);
     
 
     /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
-        if(geometries.checkRender()) {//geometries.checkRender()
-            if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
-                const position = roomba.moveRoomba();
-                //update the position of the roomba in geometries for the drawing
-                geometries.roomba.changePosition(position.x , position.y, position.z);
-                roomba.setRoombaControl(canvas, roomba);
-                roomba.n_step = roomba.n_step + 1; 
-                doneSomething = true;
-                window.requestAnimationFrame(update);
-                return; // return as there is nothing to do
-            }
-            timeNow = time;   
-            if (doneSomething) {	
-                render(time);   
-                doneSomething = false;
-            }
-            window.requestAnimationFrame(update); // get next frame
+        if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
+            const position = roomba.moveRoomba();
+            //update the position of the roomba in geometries for the drawing
+            geometries.roomba.changePosition(position.x , position.y, position.z);
+            roomba.setRoombaControl(canvas, roomba);
+            roomba.n_step = roomba.n_step + 1; 
+            doneSomething = true;
+            window.requestAnimationFrame(update);
+            return; // return as there is nothing to do
         }
-        else {
-            geometries.gameover ? drawGameover() : drawWin();
-            window.cancelAnimationFrame(animation);
+        timeNow = time;   
+        if (doneSomething) {	
+            render(time);   
+            doneSomething = false;
         }
+        window.requestAnimationFrame(update); // get next frame
     }
 
     function render(time) { 
@@ -97,7 +91,7 @@ async function main () {
             degToRad(light.fovLight),
             light.width_projLight / light.height_projLight,
             8,  	// near: top of the frustum
-            700);   // far: bottom of the frustum
+        700);   // far: bottom of the frustum
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
         gl.viewport(0, 0, depthTextureSize, depthTextureSize);
@@ -139,9 +133,15 @@ async function main () {
                 camera.position = [D*1.5*Math.sin(PHI)*Math.cos(THETA),D*1.5*Math.sin(PHI)*Math.sin(THETA),D*1.5*Math.cos(PHI)];
             }
             }*/
-            drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
-            geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection)
-            drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
+            if(geometries.checkRender()) {
+                drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
+                geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection)
+                drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
+            }
+            else {
+                geometries.gameover ? drawGameover(animation) : drawWin(animation);
+            }
+
     }    
 
     function drawScene(projectionMatrix, camera, textureMatrix, lightWorldMatrix, programInfo,time) {

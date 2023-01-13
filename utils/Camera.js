@@ -21,15 +21,15 @@ export class Camera {
     updateCamera(x, y, z, facing) {
         if (this.cameraAnteriore) {
             this.position = [x + (-D*Math.sin(degToRad(facing))), y + 20, z + (-D*Math.cos(degToRad(facing)))];
-            this.target = [x, y, z];
+            this.target = [x, y, z - 2];
         }
         if (this.cameraPosteriore) {
             this.position = [x + (D * Math.sin(degToRad(facing))), y + 7, z + (D*Math.cos(degToRad(facing)))];
             this.target = [x, y, z];
         }
         if (this.cameraAlta) {
-            this.position = [0, 105, 2];
-            this.target = [0, 0, 0];
+            this.position = [0, 170, 30];
+            this.target = [0, 0, 29];
         }
         if (this.cameraTv) {
             const x = 30;

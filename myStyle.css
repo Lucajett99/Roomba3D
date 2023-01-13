@@ -3,7 +3,7 @@ body {
 }
 #myCanvas {
     z-index: 1;
-    background: #ffffff;
+    background: rgba(0,0,0,0.88);
     border: thin inset rgba(0,0,0,0.88);
 }
 
@@ -42,12 +42,13 @@ body {
     padding-bottom: 10px;
   }
 
-#text {  /*to manage text on canvas and webgl */
-  background-color: transparent;  /* needed because we setcanvas bg color to white */
-  position: absolute;
-  z-index: 1;
-  left: 0px;
-  top: 0px;
+
+#text {
+    background: transparent;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
 }
 
 

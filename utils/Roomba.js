@@ -78,7 +78,7 @@ export class Roomba {
             mites.push(false);
         });
 
-        for(let i = 0; i<mites_position.length; i++) {
+        for(let i = 0; i < mites_position.length; i++) {
             if (this.position.x >= mites_position[i].x -6 && this.position.x <= mites_position[i].x + 6
                 && this.position.z >= mites_position[i].z -6 && this.position.z <= mites_position[i].z + 6) {
                     mites[i] = true;
@@ -86,15 +86,15 @@ export class Roomba {
         }
 
         for(let i = 0; i < debris_position.length; i++) {
-            if (this.position.x >= debris_position[i].x - 3 && this.position.x <= debris_position[i].x + 3
-                && this.position.z >= debris_position[i].z - 3 && this.position.z <= debris_position[i].z + 3) {
+            if (this.position.x >= debris_position[i].x - 5 && this.position.x <= debris_position[i].x + 5
+                && this.position.z >= debris_position[i].z - 5 && this.position.z <= debris_position[i].z + 5) {
                 gameover = true;
             }
         }
         
         if(bossPosition) {
-            if (this.position.x >= bossPosition.x - 10 && this.position.x <= bossPosition.x + 10
-                && this.position.z >= bossPosition.z - 10 && this.position.z <= bossPosition.z + 10) {
+            if (this.position.x >= bossPosition.x - 8 && this.position.x <= bossPosition.x + 8
+                && this.position.z >= bossPosition.z - 8 && this.position.z <= bossPosition.z + 8) {
                     boss = true;
                 }
             }

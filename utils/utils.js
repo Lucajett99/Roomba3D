@@ -271,30 +271,48 @@ function getManipulationPanel() {
     manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
 }
 
-function drawWin(){
-    /*window.addEventListener("keypress", function(event) {
+
+/*--------------------------------------------------TEXT DRAWING---------------------------------------------------------------------------- */
+
+function drawWin(animation){
+    window.cancelAnimationFrame(animation);
+    window.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
-            repeat();
+            window.location.reload();
             event.preventDefault();
         }
-   });*/
-    const winner = new Image();
-    winner.src = "resources/images/white_background.png";
-    winner.addEventListener('load', function() {});
+    });
+    const background_image = new Image();
+    background_image.src = "resources/images/end_game_background.png";
+    background_image.addEventListener('load', function() {});
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(winner, 0, 0, text.clientWidth, text.clientHeight);
-    ctx.font = '50pt Bowlby One SC';
-    ctx.fillStyle = 'black';
-    ctx.fillText("COMPLIMENTI", 290, 190);
-    ctx.fillText("    HAI VINTO ", 290, 290);
+    ctx.drawImage(background_image, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.font = '50pt Games, sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.fillText("COMPLIMENTI", 330, 200);
+    ctx.fillText("  HAI VINTO ", 330, 300);
+    ctx.font = '18pt Games, sans-serif';
+    ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 240, 400);
 }
 
-function drawGameover(){
-    const game_over = new Image();
-    game_over.src = "resources/images/game_over.png";
-    game_over.addEventListener('load', function() {});
+function drawGameover(animation) {
+    window.cancelAnimationFrame(animation);
+    window.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            window.location.reload();
+            event.preventDefault();
+        }
+    });
+    const background_image = new Image();
+    background_image.src = "resources/images/end_game_background.png";
+    background_image.addEventListener('load', function() {});
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(game_over, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.drawImage(background_image, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.font = '80pt VT323, sans-serif';
+    ctx.fillStyle = 'green';
+    ctx.fillText("GAME OVER", 350, 300);
+    ctx.font = '20pt VT323, sans-serif';
+    ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 280, 350);
 }
 
 function drawTextInfo(parassiti, bossLife){
@@ -314,64 +332,61 @@ function drawTextInfo(parassiti, bossLife){
     image_frecce.addEventListener('load', function() {});
 
     if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-    ctx.drawImage(wasd_keys, 80, 330);
-    ctx.drawImage(freccie, 540, 330);  
-    //ctx.drawImage(button1, 300, 450);
-    //ctx.drawImage(button3, 440, 450);  
-    ctx.drawImage(image_info, 871.5, 17);
+        ctx.drawImage(wasd_keys, 80, 330);
+        ctx.drawImage(freccie, 540, 330);  
+        //ctx.drawImage(button1, 300, 450);
+        //ctx.drawImage(button3, 440, 450);  
+        ctx.drawImage(image_info, 871.5, 17);
     } 
-    else{ctx.drawImage(image_info, 871.5, 1);}
+    else{
+        ctx.drawImage(image_info, 1, 420);
+    }
     //testo
-    ctx.font = '14pt Copperplate';
-    ctx.fillStyle = 'black';
-    ctx.fillText("Prova a raccogliere tutti", 880, 50);
-    ctx.fillText("i parassiti ", 880, 70);
-    ctx.font = '14pt Copperplate';
-    ctx.fillStyle = 'red';
-    if (parassiti_raccolti == n_parassiti){
+    if (parassiti_raccolti == n_parassiti){ 
+        ctx.font = '20pt Games, sans-serif';
         ctx.fillStyle = 'green';
-        ctx.fillText("    Complimenti!!!!!", 880, 100);
-        ctx.fillText("  Hai raccolto tutti i parassiti", 880, 120);
-        ctx.font = '14pt Copperplate'; 
+        ctx.fillText("Complimenti !  Hai raccolto tutti i parassiti", 220, 460);
+        ctx.font = '16pt Games, sans-serif';
+        ctx.fillStyle = 'rgb(240,240,240)';
+        ctx.fillText("e' arrivato il Boss dei parassiti", 20, 500);
+        ctx.fillText(`Vite del Boss : ${bossLife}`, 20, 520);
+
+        ctx.font = '12pt Games, sans-serif';
         ctx.fillStyle = 'red';
-        ctx.fillText(" Hai fatto infuriare il boss dei parassiti!", 880, 190);
-        ctx.fillText("    (ATTENTO HA 3 VITE E SI TELETRASPORTA!)", 880, 210);
-        ctx.fillText(`Vite del Boss: ${bossLife}`, 880, 230)
+        ctx.fillText("ATTENZIONE : IL BOSS SI TELETRASPORTA", 20, 560);
     }
-    else if(bossLife == 0) {
-        ctx.fillStyle = 'green';
-        ctx.fillText("    Grazie per aver aspirato tutti i parassiti  ", 880, 100);
+    else {
+        ctx.font = '20pt Games, sans-serif';
+        ctx.fillStyle = 'rgb(240,240,240)';
+        ctx.fillText("Prova a raccogliere tutti i parassiti ", 300, 460);
+        ctx.font = '16pt Games, sans-serif';
+        ctx.fillText(`Parassiti da raccogliere :  ${n_parassiti - parassiti_raccolti}`, 20, 520);
     }
-    else
-        ctx.fillText(`Parassiti da raccogliere ${n_parassiti - parassiti_raccolti}`, 880, 100)
-    
-    
 
-
-    ctx.font = '12pt Copperplate';
-    ctx.fillStyle = 'purple';
-    ctx.fillText("Attenzione evita i pezzi di ferro per ", 880, 140);
-    ctx.fillText("non rompere Roomba", 880, 160);
-    ctx.font = '10pt Copperplate';
-    ctx.fillStyle = 'Copperplate';
-    ctx.fillText("----------------------------------------------------------", 871, 270);
-    ctx.font = '16pt Copperplate';
+    //attention
+    ctx.font = '12pt Games, sans-serif';
     ctx.fillStyle = 'red';
-    ctx.fillText("	             CONTROLLI 		", 870, 290);
+    ctx.fillText("Attenzione : evita i pezzi di ferro per non rompere Roomba", 20, 580);
+
+    //info
+    ctx.font = '12pt sans-serif';
+    ctx.fillStyle = 'rgb(240,240,240)';
+    ctx.fillText("-------------------------------------------------", 850, 500);
+    ctx.fillText("|", 850, 509);
+    ctx.fillText("|", 850, 524);
+    ctx.fillText("|", 850, 539);
+    ctx.fillText("|", 850, 554);
+    ctx.fillText("|", 850, 569);
+    ctx.fillText("|", 850, 584);
+    ctx.fillText("|", 850, 599);
+    ctx.font = '13pt Games, sans-serif';
+    ctx.fillStyle = '#00cc00';
+    ctx.fillText("	              CONTROLLO MOVIMENTO 		",  780, 520);
+    ctx.font = '11pt Games, sans-serif';
+    ctx.fillText("          W : avanti           A : sinistra", 810, 560); 
+    ctx.fillText("          S : indietro         D : destra", 810, 580); 
     ctx.font = '13pt Copperplate';
-    ctx.fillStyle = 'black';
-    ctx.fillText("          Controllo movimento", 880, 310);
-    ctx.font = '12pt Copperplate';
-    ctx.fillText("          W avanti            A sinistra", 880, 330); 
-    ctx.fillText("          S indietro          D destra", 880, 350); 
-    ctx.font = '13pt Copperplate';
-    ctx.fillText("Controllo movimento camera", 880, 380);
-    ctx.fillText("con le freccie direzionali ⇑⇓⇒⇐", 880, 400); 
-    ctx.fillText("o con il movimento del mouse", 880, 420);
-    ctx.font = '13pt Copperplate';
-    ctx.fillText("Puoi avvicinare e allontare la", 880, 440); 
-    ctx.fillText("camera con la rotella del mouse", 880, 460); 
-}
+    }
 
 
 
