@@ -3,6 +3,11 @@
 // la crezione di una texture da applicarea allo skybox,
 // e tutto ciò che riguarda il caricamento di una mesh da un Obj
 
+//Bounds of the objs [tv_cabinet, sofa, foots_table]
+const objs_bounds = [{x1: 48.5, x2: 11.5, z1: -15, z2: -35}, {x1: 48.5, x2: 11.5, z1: 42, z2: 18}, {x1: -17.5, x2: -25.5, z1: 21.5, z2: 13},  {x1: -19, x2: -26, z1: 47, z2: 38.5}, {x1: -35.5, x2: -41.5, z1: 21.5, z2: 13}, {x1: -35, x2: -41.5, z1: 47, z2: 38.5}];
+
+const floor_bounds = {x1: 67.8, x2: -67.8, z1: 67.7, z2: -67.7};
+
 function degToRad(d) {
 	return d * Math.PI / 180;
 }
@@ -390,4 +395,4 @@ function drawTextInfo(parassiti, bossLife){
 
 
 
-export {depthFramebuffer, depthTexture, depthTextureSize, getManipulationPanel, drawWin, drawGameover, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+export {objs_bounds, floor_bounds, depthFramebuffer, depthTexture, depthTextureSize, getManipulationPanel, drawWin, drawGameover, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};

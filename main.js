@@ -52,7 +52,7 @@ async function main () {
 
     const switch_shadow = document.getElementById("switch_shadow");
     switch_shadow.addEventListener('change', () => {shadow_enable = !shadow_enable;});
-
+    
     update();
     const animation = window.requestAnimationFrame(update);
     
