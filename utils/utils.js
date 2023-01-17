@@ -3,6 +3,7 @@
 // la crezione di una texture da applicarea allo skybox,
 // e tutto ciò che riguarda il caricamento di una mesh da un Obj
 
+
 //Bounds of the objs [tv_cabinet, sofa, foots_table]
 const objs_bounds = [{x1: 48.5, x2: 11.5, z1: -15, z2: -35}, {x1: 48.5, x2: 11.5, z1: 42, z2: 18}, {x1: -17.5, x2: -25.5, z1: 21.5, z2: 13},  {x1: -19, x2: -26, z1: 47, z2: 38.5}, {x1: -35.5, x2: -41.5, z1: 21.5, z2: 13}, {x1: -35, x2: -41.5, z1: 47, z2: 38.5}];
 
@@ -330,19 +331,12 @@ function drawTextInfo(parassiti, bossLife){
 
     const image_wasd= new Image(); 
     image_wasd.src = "resources/images/wasd.png";
-    image_wasd.addEventListener('load', function() {});
-
-    const image_frecce = new Image();
-    image_frecce.src = "resources/images/frecce.png";
-    image_frecce.addEventListener('load', function() {});
+    image_wasd.addEventListener('load', function() {});;
 
     if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-        ctx.drawImage(wasd_keys, 80, 330);
-        ctx.drawImage(freccie, 540, 330);  
-        //ctx.drawImage(button1, 300, 450);
-        //ctx.drawImage(button3, 440, 450);  
-        ctx.drawImage(image_info, 871.5, 17);
-    } 
+        ctx.drawImage(image_wasd, 15, 260);
+        ctx.drawImage(image_info, 1, 420);
+    }
     else{
         ctx.drawImage(image_info, 1, 420);
     }
@@ -391,7 +385,7 @@ function drawTextInfo(parassiti, bossLife){
     ctx.fillText("          W : avanti           A : sinistra", 810, 560); 
     ctx.fillText("          S : indietro         D : destra", 810, 580); 
     ctx.font = '13pt Copperplate';
-    }
+}
 
 
 

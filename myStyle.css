@@ -1,6 +1,25 @@
 body {
     background: rgba(0,0,0,0.88);
 }
+
+.loading-screen {
+    position: absolute;
+    width: 1100px;
+    height: 600px;
+    background-color: rgba(0,0,0,0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    border: thin inset rgba(0,0,0,0.88);
+}
+
+#loading_text {
+    color: white;
+    font-family: "Games", "Copperplate", "Copperplate Gothic Light", "fantasy", "sans-serif";
+    font-size: 50px;
+}
+
 #myCanvas {
     z-index: 1;
     background: rgba(0,0,0,0.88);

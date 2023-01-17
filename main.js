@@ -55,6 +55,8 @@ async function main () {
     
     update();
     const animation = window.requestAnimationFrame(update);
+    const loadingScreen = document.querySelector('.loading-screen');
+    loadingScreen.style.display = 'none';
     
 
     /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
@@ -201,8 +203,6 @@ async function main () {
         }
     }  
 }
-
-
 
 
 main();

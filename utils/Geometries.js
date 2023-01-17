@@ -1,4 +1,5 @@
 import { Obj } from "./Obj.js";
+import { Roomba } from "./Roomba.js";
 
 export class Geometries {
     constructor(canvas) {
@@ -73,5 +74,6 @@ export class Geometries {
         this.gameover = this.gameover ? this.gameover : collisions.gameover;
         this.bossInfo.final = this.checkMites.every(element => element === true) && !this.gameover;
     }
+
 
 }

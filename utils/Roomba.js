@@ -71,10 +71,6 @@ export class Roomba {
     }
 
     
-    
-    
-    
-    
     collisionChecker(mites_position, debris_position, bossPosition) {
         const mites = [];
         var gameover = false;
@@ -105,51 +101,87 @@ export class Roomba {
         }
         return {mites, gameover, boss};
     }
-                
-                
-        setRoombaControl(canvas, roomba){
-            window.addEventListener("keydown", function (event) {
-                switch (event.key) {
-                    case "w":
-                        roomba.keyPressed.w = true;
-                        break;
-                    case "s":
-                        roomba.keyPressed.s = true;
-                        break;  
-                    case "a":
-                        roomba.keyPressed.a = true;
-                        break;
-                    case "d":
-                        roomba.keyPressed.d = true;
-                        break; 
-                }
-            });
-        
-            window.addEventListener("keyup", function (event) {
-                switch (event.key) {
-                    case "w":
-                        roomba.keyPressed.w = false;
-                        break;
-                        
-                    case "s":
-                        roomba.keyPressed.s = false;
-                        break;
-                    case "a":
-                        roomba.keyPressed.a = false;
-                        break;
-                        
-                    case "d":
-                        roomba.keyPressed.d = false;
-                        break; 
-                }
-            });
-                        
+    
+    setRoombaControl = () => {
+        //Check if the device is a mobile or a desktop
+        if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
+            window.addEventListener("touchstart", this.touchDownEvents, true);
+            window.addEventListener("touchend", this.touchUpEvents, true);
         }
+        else {
+            window.addEventListener("keydown", this.keyDownEvents, true);
+            window.addEventListener("keyup", this.keyUpEvents, true);
+        }
+    }
+
+    keyDownEvents = (event) => {
+        switch (event.key) {
+            case "w":
+                this.keyPressed.w = true;
+                break;
+            case "s":
+                this.keyPressed.s = true;
+                break;  
+            case "a":
+                this.keyPressed.a = true;
+                break;
+            case "d":
+                this.keyPressed.d = true;
+                break; 
+        }
+    }
+
+    keyUpEvents = (event) => {
+        switch (event.key) {
+            case "w":
+                this.keyPressed.w = false;
+                break;
+                
+            case "s":
+                this.keyPressed.s = false;
+                break;
+            case "a":
+                this.keyPressed.a = false;
+                break;
+                
+            case "d":
+                this.keyPressed.d = false;
+                break; 
+        }
+    }
                     
+    touchDownEvents = (e) => {
+        this.touch = e.touches[0];
+        const x = this.touch.pageX - canvas.offsetLeft;
+        const y = this.touch.pageY - canvas.offsetTop;      
+        // THE W KEY
+        if (x >= 109 && y >= 284 && x <= 127 && y <= 310) this.keyPressed.w = true;
+        // THE S KEY
+        if (x >= 109 && y >= 356 && x <= 131 && y <= 380) this.keyPressed.s = true;
+        // THE A KEY
+        if (x >= 42 && y >= 356 && x <= 62 && y <= 380) this.keyPressed.a = true;
+        // THE D KEY
+        if (x >= 178 && y >= 356 && x <= 199 && y <= 380) this.keyPressed.d = true;
+    }
+
+    touchUpEvents = () => {
+        const x = this.touch.pageX - canvas.offsetLeft;
+        const y = this.touch.pageY - canvas.offsetTop;
+        // THE W KEY
+        if (x >= 109 && y >= 284 && x <= 127 && y <= 310) this.keyPressed.w = false;
+        // THE S KEY
+        if (x >= 109 && y >= 356 && x <= 131 && y <= 380) this.keyPressed.s = false;
+        // THE A KEY
+        if (x >= 42 && y >= 356 && x <= 62 && y <= 380) this.keyPressed.a = false;
+        // THE D KEY
+        if (x >= 178 && y >= 356 && x <= 199 && y <= 380) this.keyPressed.d = false;
+    }
+
     #checkBounds(boundsCoords) {
         return this.position.x + this.speed.x <= boundsCoords.x1 && this.position.x + this.speed.x >= boundsCoords.x2 &&
             this.position.z + this.speed.z <= boundsCoords.z1 && this.position.z + this.speed.z >= boundsCoords.z2;
     }
     
 }
+
     
