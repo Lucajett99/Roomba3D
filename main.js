@@ -8,7 +8,6 @@ import { createTextureLight, getManipulationPanel, degToRad, depthFramebuffer, d
 
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
 var timeNow = 0;
-var drag;
 var bias = -0.00005;
 const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
 const fieldOfViewRadians = degToRad(60); 
@@ -56,10 +55,13 @@ async function main () {
     update();
     const animation = window.requestAnimationFrame(update);
     const loadingScreen = document.querySelector('.loading-screen');
-    loadingScreen.style.display = 'none';
+    setTimeout(function() {
+        loadingScreen.style.display = 'none';
+    }, 5000);
+    
     
 
-    /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
+/*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
     function update(time){
         if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
             const position = roomba.moveRoomba();
@@ -73,7 +75,7 @@ async function main () {
         }
         timeNow = time;   
         if (doneSomething) {	
-            render(time);   
+            render(time);
             doneSomething = false;
         }
         window.requestAnimationFrame(update); // get next frame
@@ -101,48 +103,43 @@ async function main () {
 
 
         drawScene(light.ProjectionMatrix, light.WorldMatrix, m4.identity(), light.WorldMatrix, colorProgramInfo, time);
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            gl.clearColor(0, 0, 0, 1); //setta tutto a nero se 0,0,0,1
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        gl.clearColor(0, 0, 0, 1); //setta tutto a nero se 0,0,0,1
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-            let textureMatrix = m4.identity();
-            textureMatrix = m4.translate(textureMatrix, 0.5, 0.5, 0.5);
-            textureMatrix = m4.scale(textureMatrix, 0.5, 0.5, 0.5);
-            textureMatrix = m4.multiply(textureMatrix, light.ProjectionMatrix);
-            textureMatrix = m4.multiply(textureMatrix, m4.inverse(light.WorldMatrix));
-                    
+        let textureMatrix = m4.identity();
+        textureMatrix = m4.translate(textureMatrix, 0.5, 0.5, 0.5);
+        textureMatrix = m4.scale(textureMatrix, 0.5, 0.5, 0.5);
+        textureMatrix = m4.multiply(textureMatrix, light.ProjectionMatrix);
+        textureMatrix = m4.multiply(textureMatrix, m4.inverse(light.WorldMatrix));
+                
 
-            var projection = m4.perspective(fieldOfViewRadians, aspect, 0.1, 1200);
+        var projection = m4.perspective(fieldOfViewRadians, aspect, 0.1, 1200);
 
-            // Compute the camera's matrix using look at.
-            var myCamera = camera.createCamera();
+        // Compute the camera's matrix using look at.
+        var myCamera = camera.createCamera();
 
-            // Make a view matrix from the camera matrix.
-            var view = m4.inverse(myCamera);
+        // Make a view matrix from the camera matrix.
+        var view = m4.inverse(myCamera);
 
-            const posX = roomba.position.x;
-            const posY = roomba.position.y;
-            const posZ = roomba.position.z;
-            const facing = roomba.facing;
+        const posX = roomba.position.x;
+        const posY = roomba.position.y;
+        const posZ = roomba.position.z;
+        const facing = roomba.facing;
 
-            camera.updateCamera(posX, posY, posZ, facing);
+        camera.updateCamera(posX, posY, posZ, facing);
 
-            /*
-            if(camera.cameraLiberabis){
-                camera.position = [D*1.5*Math.sin(PHI)*Math.cos(THETA),D*1.5*Math.sin(PHI)*Math.sin(THETA),D*1.5*Math.cos(PHI)];
-            }
-            }*/
-            if(geometries.checkRender()) {
-                drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
-                geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection)
-                drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
-            }
-            else {
-                geometries.gameover ? drawGameover(animation) : drawWin(animation);
-            }
+        if(geometries.checkRender()) {
+            drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
+            geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection)
+            drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
+        }
+        else {
+            geometries.gameover ? drawGameover(animation) : drawWin(animation);
+        }
 
     }    
 

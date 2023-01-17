@@ -317,7 +317,7 @@ function drawGameover(animation) {
     ctx.font = '80pt VT323, sans-serif';
     ctx.fillStyle = 'green';
     ctx.fillText("GAME OVER", 350, 300);
-    ctx.font = '20pt VT323, sans-serif';
+    ctx.font = '20pt VT323, sans-serif'; 
     ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 280, 350);
 }
 

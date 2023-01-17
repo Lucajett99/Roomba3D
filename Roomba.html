@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="myStyle.css">
   </link>
-  <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet"></link>
   <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
+  <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet"></link>
   <style>
     @import url('https://fonts.cdnfonts.com/css/games');
     </style>
@@ -19,7 +19,8 @@
     var shadow_enable = false;
   </script>
   <div class="loading-screen">
-    <h2 id="loading_text"> </h2>
+    <p class="loading_content" style="margin-bottom: 0%"> Game Loading </p>
+    <p id="loading_text" class="loading_content" style="margin-top: 0%"> &nbsp; </p>
   </div>
   <div class="container">
     <canvas width="1100" height="600" id="myCanvas"></canvas>
@@ -63,21 +64,21 @@
     const textCanvas = document.getElementById("text");
     const ctx = textCanvas.getContext("2d");
 
-    let loadingText = "Loading ";
+    let loadingText = "";
 
     // Crea una funzione che aggiunge un punto alla stringa ogni secondo
     function addDot() {
-        loadingText += ". ";
+        loadingText += " .";
         const loading_text = document.getElementById("loading_text").innerHTML = loadingText;
     }
 
     // Utilizza setInterval per eseguire la funzione ogni secondo
-    let intervalId = setInterval(addDot, 1000);
+    let intervalId = setInterval(addDot, 1400);
 
     // Utilizza setTimeout per interrompere l'intervallo dopo 5 secondi
     setTimeout(function() {
         clearInterval(intervalId);
-    }, 5000);
+    }, 8000);
 
 
     //ext serve per la depth texture, se no diventa tutto nero

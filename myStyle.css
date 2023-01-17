@@ -6,18 +6,20 @@ body {
     position: absolute;
     width: 1100px;
     height: 600px;
-    background-color: rgba(0,0,0,0.88);
+    background-color: rgba(0,0,0,1);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 2;
     border: thin inset rgba(0,0,0,0.88);
+    
 }
 
-#loading_text {
-    color: white;
+.loading_content {
+    color: red;
     font-family: "Games", "Copperplate", "Copperplate Gothic Light", "fantasy", "sans-serif";
-    font-size: 50px;
+    font-size: 80px;
 }
 
 #myCanvas {
