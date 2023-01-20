@@ -29,12 +29,12 @@ async function main () {
     var sunProgramInfo = webglUtils.createProgramInfo(gl, [sunVertShader, sunFragShader])
     var colorProgramInfo = webglUtils.createProgramInfo(gl, [colorVertShader, colorFragShader])
 
-    await geometries.setGeo(gl);
+    await geometries.setGeo(sunProgramInfo);
     createTextureLight(); //ombre
     getManipulationPanel(); //get manipulation (lights, shadows, camera) panel   
 
     webglLessonsUI.setupSlider("#LightX", {value: 10, slide: light.updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightY", {value: 320, slide: light.updateLighty, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#LightY", {value: 220, slide: light.updateLighty, min: 100, max: 450, step: 1});
     webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: light.updateLightz, min: 100, max: 350, step: 1});
 
     const button_camera_anteriore = document.getElementById("button_camera_anteriore");
@@ -55,10 +55,9 @@ async function main () {
     update();
     const animation = window.requestAnimationFrame(update);
     const loadingScreen = document.querySelector('.loading-screen');
-    setTimeout(function() {
+    /*setTimeout(function() {
         loadingScreen.style.display = 'none';
-    }, 5000);
-    
+    }, 5000);*/
     
 
 /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/
@@ -134,7 +133,7 @@ async function main () {
 
         if(geometries.checkRender()) {
             drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
-            geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection)
+            geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection);
             drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
         }
         else {
@@ -179,7 +178,7 @@ async function main () {
         geometries.floor.drawFloor(programInfo);        
         geometries.roomba.drawObject(programInfo, {x: 3, y: 3, z: 3}, degToRad(roomba.facing));
         geometries.updateGame(roomba);//check if roomba had collisions
-        geometries.table.drawObject(programInfo, {x: 1, y: 2, z: 1});
+        geometries.table.drawObject(programInfo, {x: 1, y: 1, z: 1});
         geometries.sofa.drawObject(programInfo, {x: 15, y: 30, z: 20}, degToRad(180));
         geometries.cabinet.drawObject(programInfo, {x: 1, y: 1, z: 1});
         geometries.tv.drawObject(programInfo, {x: 10, y: 10, z: 10});

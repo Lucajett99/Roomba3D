@@ -1,6 +1,6 @@
 export class Light {
     constructor() {
-        this.position = {x: 10, y: 320, z: 250};
+        this.position = {x: 10, y: 220, z: 250};
         this.target = {x: 0, y: 0, z: 0};
 
         this.width_projLight= 3000;

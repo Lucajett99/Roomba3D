@@ -10,7 +10,6 @@
   <style>
     @import url('https://fonts.cdnfonts.com/css/games');
     </style>
-</head>
   <title>Roomba 3D</title>
 </head>
 
@@ -18,10 +17,10 @@
   <script>
     var shadow_enable = false;
   </script>
-  <div class="loading-screen">
+  <!--<div class="loading-screen">
     <p class="loading_content" style="margin-bottom: 0%"> Game Loading </p>
     <p id="loading_text" class="loading_content" style="margin-top: 0%"> &nbsp; </p>
-  </div>
+  </div>-->
   <div class="container">
     <canvas width="1100" height="600" id="myCanvas"></canvas>
     <canvas width="1100" height="600" id="text"></canvas>
@@ -69,7 +68,7 @@
     // Crea una funzione che aggiunge un punto alla stringa ogni secondo
     function addDot() {
         loadingText += " .";
-        const loading_text = document.getElementById("loading_text").innerHTML = loadingText;
+        //const loading_text = document.getElementById("loading_text").innerHTML = loadingText;
     }
 
     // Utilizza setInterval per eseguire la funzione ogni secondo
@@ -96,6 +95,9 @@
 <script type="text/javascript" src="resources/libs/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="resources/libs/dat.gui.js"></script>
 <script type="text/javascript" src="resources/libs/webgl-utils.js"></script>
+<script type="text/javascript" src="resources/libs/load_mesh.js"></script>
+<script type="text/javascript" src="resources/libs/mesh_utils.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script type="module" src="main.js"></script>
 
 </html>

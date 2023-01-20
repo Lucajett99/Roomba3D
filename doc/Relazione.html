@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Relazione Roomba 3D</title>
+        <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-color: rgba(0,0,0,0.88);
+                font-family: 'Sofia Sans', sans-serif;
+                color: white;
+            }
+            h1 {
+                font-family: 'Games', monospace;
+                font-size: 50px;
+                color: red;
+            }
+            h2 {
+                text-align: center;
+                color: #00cc00;
+            }
+            p {
+                font-size: 20px;
+                color: white;
+            }
+            div {
+                margin: 30px;
+            }
+            .images {
+                text-align: center;
+            }
+            #header {
+                text-align: center;
+            }
+		</style>
+    </head>
+
+    <body>
+        <div id="header">
+            <h1>Roomba 3D</h1>
+            <h2>Progetto per il corso di Computer Graphics</h2>
+            <h3>Luca Genova mat.0001038843 Magistrale in Informatica</h3>
+
+            <div>
+                <img src="./images/Prima_vista.jpg" height="420">
+            </div>
+        </div>
+        <div id="content">
+            <h2>Il gioco</h2>
+            <p>
+                C'è un robot aspirapolvere di nome Roomba che vive in una casa. Oggi, la casa è stata invasa da un'orda di parassiti che si aggirano per le stanze, causando danni e lasciando detriti metallici ovunque. Roomba, deciso a salvare la casa, decide di prendere in mano la situazione e prova a pulire la casa. Tuttavia, deve fare attenzione a non camminare sui detriti, altrimenti rischia di essere danneggiato. il pericolo che corre è grande perché dopo aver eliminato tutti i parassiti, Roomba dovrà affrontare il loro boss, un parassita con tre vite che può teletrasportarsi in diverse posizioni. Roomba, determinato a salvare la casa, inizia la sua ultima missione per eliminare il boss e riportare la pace nella casa.
+            </p>
+            <p>
+                Il gioco consiste nel controllare Roomba e pulire una stanza della casa eliminando i parassiti e evitando di camminare sui detriti metallici. Il giocatore deve eliminare tutti i parassiti prima di affrontare il boss, un parassita con tre vite che può teletrasportarsi in diverse posizioni dopo avergli eliminato una vita. Il giocatore deve sconfiggere il boss per completare il gioco e riportare la pace nella casa.
+
+            </p>
+
+            <h2>L'ambiente</h2>
+            <div class="images">
+                <img src="./images/Stanza.jpg" height="350">
+            </div>
+            <p>
+                Per la realizzazione dell'ambiente è stato inizialmente creato uno skybox tramite un cubo texturato adeguatamente (con una carta da parati per dare l'impressione di essere in una stanza). Con l'uso della visone prospettica, essa ci da una sensazione di ambiente "infinito", questo potrebbe trarre in inganno il giocatore spingendolo a fuoriuscire dalla stanza, ed è per questo che è stato limitato il movimento di Roomba solamente all'interno di essa. <br>
+                L'ambiente è stato poi arricchito tramite un piano (il pavimento) texturato con un pavimento di legno (parquet) senza però pareti, ed è proprio per questo che è stato necessario limitare il movimento di Roomba all'interno della stanza. Quindi quando Roomba arriverà ai bordi del pavimento sbatterà/si fermerà.
+            </p>
+
+            <h2>Gli oggetti</h2>
+            <p>
+                La stanza così creata è stata poi arricchita da varie mesh 3D:
+            </p>
+            <ul>
+                <li>Il nostro Roomba</li>
+                <li>Un divano</li>
+                <li>Un mobile per la TV</li>
+                <li>Una TV</li>
+                <li>Un tavolo</li>
+                <li>Alcuni parassiti</li>
+                <li>Alcuni detriti metallici</li>
+
+            </ul>
+            <div class="images">
+                <img src="./images/Roomba.png" height="350">
+                <img src="./images/Roomba.png" height="350">
+            </div>
+            <p>
+                La maggior parte sono state scaricate già fatte ma alcune sono state modificate tramite Blender per renderle più adatte al gioco o alleggerirle. Esse vengono importate da file locali .obj tramite la funzione "loadobj" all'interno del file utils.js.
+            </p>
+            <h2>Le texture</h2>
+            <p>
+                Le texture per gli oggetti vengono caricate, come visto anche a lezione, utilizzando i metodi "gl.createTexture()" e "gl.texImage2D()". Il primo metodo gl.createTexture() crea una nuova istanza di una texture vuota, mentre il secondo metodo gl.texImage2D() carica i dati dell'immagine nella texture appena creata. Questi metodi sono entrambi parte della libreria WebGL, che fornisce un'interfaccia per l'accelerazione hardware della grafica 3D all'interno del browser. Utilizzando questi metodi per caricare le texture, si può migliorare la performance del gioco e rendere l'esperienza utente più fluida.<br>
+                <br>
+                Le texture inserite sono principalemente le immagini delle texture collegate alle mesh 3D, ma sono state inserite anche texture a piacimento come per il pavimento il parquet e per i detriti una texture sul metallo.<br>
+                È stata inserita, come richiesto dalla consegna, anche come texture una mia foto personale sul display della tv che si può facilmente visualizzare attraverso il cambio prospettiva da Roomba a TV.
+            </p>
+            <div class="images">
+                <img src="./images/Iron_texture.JPG" height="350">
+            </div>
+
+            <h2>Luci e Ombre</h2>
+            <p>
+                Per rendere la scena più realistica, è stata posizionata una luce in cima alla scena per simulare l'effetto di una lampadina. Con questa luce direzionale ed insieme ad una texture di profondità, è stato possibile determinare quali oggetti siano in ombra e quali no. L'utente ha la possibilità di modificare la posizione della luce rispetto agli assi x,y,z.<br> 
+                <br>
+                L'illuminazione appena discussa presenta difficoltà nella generazione di ombre di qualità, spesso risultano pixelate sia sugli oggetti che nella loro proiezione prospettica sul piano. Per migliorare questo aspetto, è necessario indagare su algoritmi di shading che possano ammorbidire i contorni delle ombre e renderle più realistiche. Inoltre è stato utilizzato un bias fisso per limitare al minimo l'effetto "shadow acne" (causato dalla mancanza di precisione nei calcoli della profondità della texture utilizzata) rendendo le ombre più pulite e realistiche. È stata, quindi, data all'utente la possibilità di voler visualizzare le ombrature degli oggetti o meno. <br>
+                <br>
+        
+                <div class="images">
+                    <img src="./images/Roomba_shadows.JPG" height="350">
+                </div>
+            </p>
+            <h2>Movimenti e rotazioni</h2>
+            <p>
+                La logica di movimento di Roomba è stata ispirata dal file cg-car2.js fornito durante la lezione. Roomba ha la possibilità di incontrare ostacoli come detriti, parassiti o altri oggetti presenti nella stanza. In caso di collisione con i detriti, il gioco termina mentre in caso di collisione con i parassiti essi vengono risucchiati (avendone quindi uno in meno da eliminare). In caso di collisione con gli altri oggetti, Roomba semplicemente "sbatterà" contro di essi senza subire alcun danno.<br>
+                Per implementare la funzione di collisione, abbiamo utilizzato le coordinate x, y, z di Roomba per determinare la sua posizione nello spazio virtuale del gioco. Utilizzando queste informazioni, siamo stati in grado di confrontare la posizione di Roomba con quella degli oggetti presenti nella stanza, e in caso di sovrapposizione, rilevare una collisione. In questo modo, siamo stati in grado di determinare quando Roomba entra in contatto con detriti, parassiti e altri oggetti nella stanza, consentendo al giocatore di interagire con loro in modo appropriato.<br>
+                <br>
+                Per rendere l'esperienza di gioco più realistica, abbiamo deciso di far ruotare i parassiti presenti nella scena. Questa funzione di rotazione è stata implementata utilizzando la libreria "m4.js" e in particolare la funzione "m4.yRotate(m, angleInRadians, dst)". Questo ci ha permesso di creare una maggiore dinamicità nella scena e di migliorare l'immersione del giocatore.
+            </p>
+            
+            <div class="images">
+                <video id="video1" height="350" autoplay muted loop>
+                    <source src="./images/Rotation_and_shadows.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p style="font-size: 10pt;"> Qui viene mostrato come ruota un parassita, il funzionamento delle luci e delle ombre.</p>
+            </div>
+            <h2>Interazioni dell'utente</h2>
+            <p>
+                
+            </p>
+        </div>
+    </body>
+</html>
+<!--TODO: scrivere della grafica 2d, mobile-->

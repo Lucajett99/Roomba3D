@@ -26,12 +26,12 @@ function loadSkyboxTexture() {
     const texture = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
     
-	const faceInfos = [{target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'resources/images/background/px.png',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'resources/images/background/nx.png',},
-	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'resources/images/background/py.png',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'resources/images/background/ny.png',},
-	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'resources/images/background/pz.png',},
-	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'resources/images/background/nz.png',},
+	const faceInfos = [{target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'resources/images/carta_da_parati.jpg',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'resources/images/carta_da_parati.jpg',},
+	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'resources/images/carta_da_parati.jpg',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'resources/images/carta_da_parati.jpg',},
+	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'resources/images/carta_da_parati.jpg',},
+	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'resources/images/carta_da_parati.jpg',},
 	];
 
     faceInfos.forEach((faceInfo) => {
@@ -274,7 +274,7 @@ function parseOBJ(text) {
 
 function getManipulationPanel() {
     const manipulation_div = document.getElementById('manipulation');
-    manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Camera </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
+    manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Prospettiva </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
 }
 
 

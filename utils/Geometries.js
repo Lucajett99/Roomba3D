@@ -10,10 +10,10 @@ export class Geometries {
         this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -60}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: 30, y: 0, z: -5})];
         //this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
         this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: 5, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
-        this.table = new Obj("table", {x: -30, y: 0, z: 30}); 
+        this.table = new Obj("table", {x: -30, y: 6.5, z: 30}); 
         this.sofa = new Obj("sofa", {x: 30, y: 0, z: 30});
-        this.cabinet = new Obj("tv_cabinet", {x: 30, y: 0, z: -25});
-        this.tv = new Obj("tv", {x: 30, y: 12, z: -20});
+        this.cabinet = new Obj("tv_cabinet", {x: 30, y: -1, z: -25});
+        this.tv = new Obj("tv", {x: 30, y: 11, z: -20});
         this.skybox = new Obj("skybox");
 
         this.bossInfo = {final: false, lifes: this.bossMite.length};
@@ -24,8 +24,8 @@ export class Geometries {
         this.gameover = false;
     }
 
-    async setGeo(gl) {
-        await this.roomba.loadObject("resources/objs/roomba.obj", "resources/images/dark_texture.jpg");
+    async setGeo() {
+        await this.roomba.loadObject("resources/objs/roomba.obj", "resources/images/roomba_texture.jpg");
         await this.floor.loadObject(null, "resources/images/parquet_texture.jpg");
         await this.table.loadObject("resources/objs/table.obj", "resources/images/white_wood_texture.jpg");
         await this.sofa.loadObject("resources/objs/sofa.obj", "resources/images/sofa_texture.jpg");
@@ -41,6 +41,7 @@ export class Geometries {
         for (let bossMite of this.bossMite) {
             await bossMite.loadObject("resources/objs/mite.obj", "resources/images/dark_texture.jpg");
         }
+        
     }
     
     checkRender() {

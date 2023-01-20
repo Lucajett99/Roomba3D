@@ -30,15 +30,17 @@ export class Camera {
         }
         if (this.cameraDragging.isDragging) {
             this.position = [D * 1.5 * Math.sin(this.PHI) * Math.cos(this.THETA), D * 1.5 * Math.sin(this.PHI) * Math.sin(this.THETA), D * 1.5 * Math.cos(this.PHI)];
-            this.target = [x, y, z];
+            this.target = [x,y,z];
         }
         if (this.cameraAnteriore && !this.cameraDragging.isDragging) {
             this.position = [x + (-D*Math.sin(degToRad(facing))), y + 20, z + (-D*Math.cos(degToRad(facing)))];
             this.target = [x, y, z - 2];
         }
         if (this.cameraAlta) {
-            this.position = [0, 170, 30];
-            this.target = [0, 0, 29];
+            //this.position = [0, 170, 30];
+            //this.target = [0, 0, 29];
+            this.position = [x, 100, 30];
+            this.target = [x,y,z];
         }
         if (this.cameraTv) {
             const x = 30;

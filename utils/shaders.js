@@ -10,6 +10,7 @@ const colorVertShader= `
 			  // Multiply the position by the matrices.
 			  gl_Position = u_projection * u_view * u_world * a_position;
 			}`;
+            
 const colorFragShader= `
 			precision mediump float;
 
@@ -99,14 +100,16 @@ const skyFragShader = `
 
 		  gl_Position = u_projection * u_view * worldPosition;
 
+          
+		  v_projectedTexcoord = u_textureMatrix * worldPosition;
+          
+		  // orient the normals and pass to the fragment shader
+		  v_normal = mat3(u_world) * a_normal;
+          
 		  // Pass the texture coord to the fragment shader.
 		  v_texcoord = a_texcoord;
-
-		  v_projectedTexcoord = u_textureMatrix * worldPosition;
-
-		  // orient the normals and pass to the fragment shader
-		  v_normal = mat3(u_world) * a_normal;}`;
-		
+        }`;
+          
 		const sunFragShader = `
 		precision mediump float;
 
@@ -148,5 +151,9 @@ const skyFragShader = `
 		  gl_FragColor = vec4(texColor.rgb * light * shadowLight,	 texColor.a);
 
 			}`;
+
+        
+
+
 
 export {colorVertShader, colorFragShader, vertShader, fragShader, skyVertShader, skyFragShader, sunVertShader, sunFragShader};

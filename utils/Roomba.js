@@ -5,7 +5,7 @@ import { objs_bounds, floor_bounds } from "./utils.js";
 //Smaller value results in bigger friction, larger value results in smaller friction    
 export class Roomba {
     constructor(){
-        this.position = {x: 0, y: 0, z: 0}; // x, y, z 
+        this.position = {x: 0, y: 0.8, z: 0}; // x, y, z 
         this.speed = {x: 0, y: 0, z: 0}; //x, y, z
         this.friction = {x: 0.8, y: 1, z: 0.99 }; //grande attrito sulla X, nullo sulla y, piccolo sulla z
         this.facing = 0;
@@ -80,22 +80,22 @@ export class Roomba {
         });
         
         for(let i = 0; i < mites_position.length; i++) {
-            if (this.position.x >= mites_position[i].x -6 && this.position.x <= mites_position[i].x + 6
-                && this.position.z >= mites_position[i].z -6 && this.position.z <= mites_position[i].z + 6) {
+            if (this.position.x >= mites_position[i].x -5 && this.position.x <= mites_position[i].x + 5
+                && this.position.z >= mites_position[i].z -5 && this.position.z <= mites_position[i].z + 5) {
                     mites[i] = true;
                 }
         }
 
         for(let i = 0; i < debris_position.length; i++) {
-            if (this.position.x >= debris_position[i].x - 5 && this.position.x <= debris_position[i].x + 5
-                && this.position.z >= debris_position[i].z - 5 && this.position.z <= debris_position[i].z + 5) {
+            if (this.position.x >= debris_position[i].x - 3 && this.position.x <= debris_position[i].x + 3
+                && this.position.z >= debris_position[i].z - 3 && this.position.z <= debris_position[i].z + 3) {
                 gameover = true;
             }
         }
         
         if(bossPosition) {
-            if (this.position.x >= bossPosition.x - 8 && this.position.x <= bossPosition.x + 8
-                && this.position.z >= bossPosition.z - 8 && this.position.z <= bossPosition.z + 8) {
+            if (this.position.x >= bossPosition.x - 7 && this.position.x <= bossPosition.x + 7
+                && this.position.z >= bossPosition.z - 7 && this.position.z <= bossPosition.z + 7) {
                     boss = true;
                 }
         }

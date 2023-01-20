@@ -26,7 +26,7 @@ export class Obj {
                 normal: {numComponents: 3, data: webglVertexData[2],},
             }
             this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, obj_array);
-            texture ? this.texture = loadTextureFromImg(texture) : null;
+            this.texture = texture ? loadTextureFromImg(texture) : null;
         }
     }
 
@@ -35,10 +35,11 @@ export class Obj {
         u_model = m4.yRotate(u_model, rotation);
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
         webglUtils.setUniforms(ProgramInfo, {
-            u_colorMult: [0.5, 0.5, 1, 1],
+            u_colorMult: [0.7, 0.7, 0.7, 1.0] ,
             u_world: u_model,
             u_texture: this.texture,
-        })
+
+        });
         webglUtils.drawBufferInfo(gl, this.bufferInfo);
     }
 
