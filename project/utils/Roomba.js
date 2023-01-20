@@ -87,8 +87,8 @@ export class Roomba {
         }
 
         for(let i = 0; i < debris_position.length; i++) {
-            if (this.position.x >= debris_position[i].x - 3 && this.position.x <= debris_position[i].x + 3
-                && this.position.z >= debris_position[i].z - 3 && this.position.z <= debris_position[i].z + 3) {
+            if (this.position.x >= debris_position[i].x - 5 && this.position.x <= debris_position[i].x + 5
+                && this.position.z >= debris_position[i].z - 5 && this.position.z <= debris_position[i].z + 5) {
                 gameover = true;
             }
         }

@@ -21,9 +21,10 @@
     <p class="loading_content" style="margin-bottom: 0%"> Game Loading </p>
     <p id="loading_text" class="loading_content" style="margin-top: 0%"> &nbsp; </p>
   </div>-->
-  <div class="container">
-    <canvas width="1100" height="600" id="myCanvas"></canvas>
-    <canvas width="1100" height="600" id="text"></canvas>
+  <div class="container" id="canvas_container">
+      <canvas width="1100" height="600" id="myCanvas"></canvas>
+      <canvas width="1100" height="200" id="text"></canvas>
+      <canvas width="1100" height="600" id="wasd_canvas"></canvas>
   </div>
   <div id="uiContainer">
     <div id="manipulation">
@@ -63,6 +64,9 @@
     const textCanvas = document.getElementById("text");
     const ctx = textCanvas.getContext("2d");
 
+    const wasd_canvas = document.getElementById("wasd_canvas");
+    const ctx_wasd = wasd_canvas.getContext("2d");
+
     let loadingText = "";
 
     // Crea una funzione che aggiunge un punto alla stringa ogni secondo
@@ -95,8 +99,6 @@
 <script type="text/javascript" src="resources/libs/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="resources/libs/dat.gui.js"></script>
 <script type="text/javascript" src="resources/libs/webgl-utils.js"></script>
-<script type="text/javascript" src="resources/libs/load_mesh.js"></script>
-<script type="text/javascript" src="resources/libs/mesh_utils.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script type="module" src="main.js"></script>
 

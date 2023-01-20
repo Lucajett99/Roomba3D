@@ -64,12 +64,30 @@ body {
   }
 
 
-#text {
+/*#text {
     background: transparent;
     position: absolute;
     z-index: 1;
     top: 0;
     left: 0;
+}*/
+
+
+#text {  
+    background-color: rgb(24, 24, 24);  /* needed because we setcanvas bg color to white */
+    position: absolute;
+    z-index: 2;
+    border: thin inset rgba(0,0,0,0.88);
+    bottom: 0px;
+    left: 0px;
+}
+
+#wasd_canvas {
+    position: absolute;
+    background: transparent;
+    z-index: 3;
+    top: 0px;
+    left: 0px;
 }
 
 

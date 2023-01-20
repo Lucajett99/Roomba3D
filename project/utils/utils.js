@@ -288,11 +288,10 @@ function drawWin(animation){
             event.preventDefault();
         }
     });
-    const background_image = new Image();
-    background_image.src = "resources/images/end_game_background.png";
-    background_image.addEventListener('load', function() {});
+    ctx.canvas.height = 600;
+    ctx_wasd.clearRect(0, 0, ctx_wasd.canvas.width, ctx_wasd.canvas.height);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(background_image, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.canvas.style.backgroundColor = "black";
     ctx.font = '50pt Games, sans-serif';
     ctx.fillStyle = 'white';
     ctx.fillText("COMPLIMENTI", 330, 200);
@@ -309,11 +308,10 @@ function drawGameover(animation) {
             event.preventDefault();
         }
     });
-    const background_image = new Image();
-    background_image.src = "resources/images/end_game_background.png";
-    background_image.addEventListener('load', function() {});
+	ctx.canvas.height = 600;
+    ctx_wasd.clearRect(0, 0, ctx_wasd.canvas.width, ctx_wasd.canvas.height);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(background_image, 0, 0, text.clientWidth, text.clientHeight);
+    ctx.canvas.style.backgroundColor = "black";
     ctx.font = '80pt VT323, sans-serif';
     ctx.fillStyle = 'green';
     ctx.fillText("GAME OVER", 350, 300);
@@ -324,31 +322,25 @@ function drawGameover(animation) {
 function drawTextInfo(parassiti, bossLife){
     const n_parassiti = parassiti.length;
     const parassiti_raccolti = parassiti.filter(value => value === true).length;
-
-    const image_info = new Image();
-    image_info.src = "resources/images/background_info2.png";
-    image_info.addEventListener('load', function() {});
-
-    const image_wasd= new Image(); 
-    image_wasd.src = "resources/images/wasd.png";
-    image_wasd.addEventListener('load', function() {});;
-
+    
     if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-        ctx.drawImage(image_wasd, 15, 260);
-        ctx.drawImage(image_info, 1, 420);
+        const image_wasd= new Image(); 
+        image_wasd.src = "resources/images/wasd.png";
+        image_wasd.addEventListener('load', function() {});;
+        ctx_wasd.drawImage(image_wasd, 15, 260);
     }
-    else{
-        ctx.drawImage(image_info, 1, 420);
+    else {
+        ctx_wasd.clearRect(0, 0, ctx_wasd.canvas.width, ctx_wasd.canvas.height);
     }
     //testo
     if (parassiti_raccolti == n_parassiti){ 
         ctx.font = '20pt Games, sans-serif';
-        ctx.fillStyle = 'green';
-        ctx.fillText("Complimenti !  Hai raccolto tutti i parassiti", 220, 460);
+        ctx.fillStyle = '#00cc00';
+        ctx.fillText("Complimenti !  Hai raccolto tutti i parassiti", 220, 35);
         ctx.font = '16pt Games, sans-serif';
         ctx.fillStyle = 'rgb(240,240,240)';
-        ctx.fillText("e' arrivato il Boss dei parassiti", 20, 500);
-        ctx.fillText(`Vite del Boss : ${bossLife}`, 20, 520);
+        ctx.fillText("e' arrivato il Boss dei parassiti", 20, 90);
+        ctx.fillText(`Vite del Boss : ${bossLife}`, 20, 130);
 
         ctx.font = '12pt Games, sans-serif';
         ctx.fillStyle = 'red';
@@ -357,33 +349,35 @@ function drawTextInfo(parassiti, bossLife){
     else {
         ctx.font = '20pt Games, sans-serif';
         ctx.fillStyle = 'rgb(240,240,240)';
-        ctx.fillText("Prova a raccogliere tutti i parassiti ", 300, 460);
+        ctx.fillText("Raccogli tutti i parassiti ", 370, 35);
         ctx.font = '16pt Games, sans-serif';
-        ctx.fillText(`Parassiti da raccogliere :  ${n_parassiti - parassiti_raccolti}`, 20, 520);
+        ctx.fillText(`Parassiti da raccogliere :  ${n_parassiti - parassiti_raccolti}`, 20, 100);
     }
+    
 
     //attention
     ctx.font = '12pt Games, sans-serif';
     ctx.fillStyle = 'red';
-    ctx.fillText("Attenzione : evita i pezzi di ferro per non rompere Roomba", 20, 580);
+    ctx.fillText("Attenzione : evita i pezzi di ferro per non rompere Roomba", 20, 180);
 
     //info
     ctx.font = '12pt sans-serif';
     ctx.fillStyle = 'rgb(240,240,240)';
-    ctx.fillText("-------------------------------------------------", 850, 500);
-    ctx.fillText("|", 850, 509);
-    ctx.fillText("|", 850, 524);
-    ctx.fillText("|", 850, 539);
-    ctx.fillText("|", 850, 554);
-    ctx.fillText("|", 850, 569);
-    ctx.fillText("|", 850, 584);
-    ctx.fillText("|", 850, 599);
+    ctx.fillText("-------------------------------------------------", 850, 95);
+    ctx.fillText("|", 850, 104);
+    ctx.fillText("|", 850, 119);
+    ctx.fillText("|", 850, 134);
+    ctx.fillText("|", 850, 149);
+    ctx.fillText("|", 850, 164);
+    ctx.fillText("|", 850, 179);
+    ctx.fillText("|", 850, 194);
+    ctx.fillText("|", 850, 199);
     ctx.font = '13pt Games, sans-serif';
     ctx.fillStyle = '#00cc00';
-    ctx.fillText("	              CONTROLLO MOVIMENTO 		",  780, 520);
+    ctx.fillText("	              CONTROLLO MOVIMENTO 		",  780, 120);
     ctx.font = '11pt Games, sans-serif';
-    ctx.fillText("          W : avanti           A : sinistra", 810, 560); 
-    ctx.fillText("          S : indietro         D : destra", 810, 580); 
+    ctx.fillText("          W : avanti           A : sinistra", 810, 170); 
+    ctx.fillText("          S : indietro         D : destra", 810, 185); 
     ctx.font = '13pt Copperplate';
 }
 
