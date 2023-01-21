@@ -1,35 +1,44 @@
 import { loadObj, loadTextureFromImg, loadSkyboxTexture, degToRad } from "./utils.js";
 
+//This class is used to create an object for the scene and is used for laoding and drawing the object
 export class Obj {
     constructor(name, position = {x: 0, y: 0, z: 0}) {
-        this.name = name;
-        this.position = position;
-        this.bufferInfo = null;
-        this.texture = null;
+        this.name = name; //the name of the object
+        this.position = position; //the position of the object
+        this.bufferInfo = null; //the bufferInfo of the object
+        this.texture = null; //the texture of the object
     }
 
     async loadObject(obj, texture) {
+        //for the skybox and the floor we have to load the obj and the texture in a different way
         if(this.name == 'skybox') {
-            this.#loadSkyBox();
+            this.loadSkyBox();
             return;
         }
         else if(this.name == 'floor') {
-            this.#loadFloor(texture);
+            this.loadFloor(texture);
             return;
         }
         else {
+            //load the obj from a local file
             const webglVertexData = await loadObj(obj);
-            //TODO: capire come funziona questo array
             const obj_array = {
                 position: {numComponents: 3, data: webglVertexData[0],},
                 texcoord: {numComponents: 2, data: webglVertexData[1],},
                 normal: {numComponents: 3, data: webglVertexData[2],},
             }
             this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, obj_array);
+            //load the texture from a local file
             this.texture = texture ? loadTextureFromImg(texture) : null;
         }
     }
 
+    /**
+     * This method is used to draw the object
+     * @param {ProgramInfo} the webgl programInfo
+     * @param {scale} the scale of the object
+     * @param {rotation} the rotation of the object (optional)
+     */
     drawObject = (ProgramInfo, scale, rotation = 0) => {
         let u_model = m4.scale(m4.translation(this.position.x, this.position.y, this.position.z), scale.x, scale.y, scale.z)
         u_model = m4.yRotate(u_model, rotation);
@@ -43,12 +52,14 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo);
     }
 
+    //This method is used change the position of the objec (it is used only for roomba object)
     changePosition(x, y, z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
     }
 
+    //This method is used to draw the floor
     drawFloor(ProgramInfo){
         let u_modelfloor = m4.identity()
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
@@ -59,7 +70,8 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
-    #loadFloor(texture) {
+    //This method is used to load the floor obj manually
+    loadFloor(texture) {
 		const S = 70; 		
 		const H = 0; 
 		const textureCoords = [ 0,0, 1,0, 0,1, 1,1,];
@@ -67,18 +79,18 @@ export class Obj {
 		const arrays_floor = {
 		   position: 	{ numComponents: 3, data: [-S,H,-S, S,H,-S, -S,H,S,  S,H,S, ], },
 		   texcoord: 	{ numComponents: 2, data: textureCoords, },
-		   //color: 	{ numComponents: 3, data: [0.7,0.7,0.7,  0.7,0.7,0.7,  0.7,0.7,0.7,  0.7,0.7,0.7], },
 		   indices: 	{ numComponents: 3, data: [0,2,1, 	2,3,1,], },
-		   normal:		{numComponents: 3, data: [0,1,0,	0,1,0,	0,1,0,	0,1,0,], },
+		   normal:		{ numComponents: 3, data: [0,1,0,	0,1,0,	0,1,0,	0,1,0,], },
 		};
 
 		this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, arrays_floor);
+        //load the texture from a local file
         this.texture = loadTextureFromImg(texture)
-        //console.log("bufferInfo_florr", bufferInfo_floor)
     }
 
+    //This method is used to draw the skybox
     drawSkybox(gl, skyboxProgramInfo, view, projection) {
-        gl.depthFunc(gl.LEQUAL) //non so perchè è necessario per lo skybox
+        gl.depthFunc(gl.LEQUAL)
 
         const viewMatrix = m4.copy(view);
 
@@ -98,7 +110,8 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
-    #loadSkyBox(){
+    //This method is used to load the skybox obj manually
+    loadSkyBox(){
         this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, {
            position: {
                data: new Float32Array([
@@ -112,8 +125,8 @@ export class Obj {
                numComponents: 2,
            },
        });
+       //load the texture from a cube map texture
        this.texture = loadSkyboxTexture();
-    //console.log("bufferInfo_skybox", bufferInfo_skybox)
     }
 
 }

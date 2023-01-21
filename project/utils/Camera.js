@@ -1,13 +1,16 @@
 import { degToRad } from "./utils.js";
 const up = [0, 1, 0];
 const D = 17;
+
+//This class is used to create a camera for the scene
 export class Camera {
     constructor() {
-        this.position = [0, 0, 0] //l'oggetto che la camera sta guardando
-        this.target = [0, 0, 0]  //la posizione della camera;
+        this.position = [0, 0, 0]; //the position of the camera
+        this.target = [0, 0, 0];  //the point the camera is looking at
         this.THETA = degToRad(86);
         this.PHI = degToRad(23);
         
+        //variables that handle camera change
         this.cameraPosteriore = true;
         this.cameraAnteriore = false;
         this.cameraAlta = false;
@@ -15,6 +18,10 @@ export class Camera {
         this.cameraTv = false;
     }
     
+    /**
+     * This method is called for creating the camera matrix
+     * @returns {Float32Array} the camera matrix
+     */
     createCamera() {
         const camera = m4.lookAt(this.position, this.target, up);
         textCanvas.addEventListener('mousedown', this.onMouseDown);
@@ -23,11 +30,18 @@ export class Camera {
         return camera;
     }
 
+    /**
+     * This method is called for updating the camera position
+     * @param {*} x is the x coordinate of position to update
+     * @param {*} y is the y coordinate of position to update
+     * @param {*} z is the z coordinate of position to update
+     */
     updateCamera(x, y, z, facing) {
         if (this.cameraPosteriore) {
             this.position = [x + (D * Math.sin(degToRad(facing))), y + 7, z + (D*Math.cos(degToRad(facing)))];
             this.target = [x, y, z];
         }
+        //this is used only when the user is dragging the camera
         if (this.cameraDragging.isDragging) {
             this.position = [D * 1.5 * Math.sin(this.PHI) * Math.cos(this.THETA), D * 1.5 * Math.sin(this.PHI) * Math.sin(this.THETA), D * 1.5 * Math.cos(this.PHI)];
             this.target = [x, y, z];
@@ -49,7 +63,9 @@ export class Camera {
         }
     }
 
-    change_cameraAnteriore = (x, y, z, facing) => {
+    /**All the following methods are used for changing the camera view */
+
+    change_cameraAnteriore = () => {
         this.cameraAnteriore = true;
         this.cameraPosteriore = false;
         this.cameraAlta = false;
@@ -57,7 +73,7 @@ export class Camera {
         this.cameraDragging.isDragging = false;
     }
 
-    change_cameraPosteriore = (x, y, z, facing) => {
+    change_cameraPosteriore = () => {
         this.cameraPosteriore = true;
         this.cameraAnteriore = false;
         this.cameraAlta = false;
@@ -91,7 +107,7 @@ export class Camera {
 
     /*--------------------Mouse events for dragging camera------------------------------------------ */
 
-    // Funzione per gestire il click del mouse
+    //Method for handling mouse up event
     onMouseDown = (event) => {
         this.cameraDragging.startX = event.clientX;
         this.cameraDragging.startY = event.clientY;
@@ -99,7 +115,7 @@ export class Camera {
         event.preventDefault();
     }
       
-    // Funzione per gestire il movimento del mouse
+    //Method for handling mouse down event
     onMouseMove = (event) => {
         if (!this.cameraDragging.isDragging) {
             return;
@@ -120,7 +136,7 @@ export class Camera {
         event.preventDefault();
     }    
 
-    // Funzione per gestire il rilascio del mouse
+    //Method for handling mouse up event
     onMouseUp = () => {
         this.cameraDragging.isDragging = false;
         //this.cameraPosteriore = true;

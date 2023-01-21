@@ -1,25 +1,27 @@
 import { objs_bounds, floor_bounds } from "./utils.js";
 
 
-//The friction value is a value in the range [0,1]. The friction controls the percentage of speed preserved 
-//Smaller value results in bigger friction, larger value results in smaller friction    
+//This class is used to create a roomba object (the subject of this game) that will be used in the scene   
 export class Roomba {
     constructor(){
-        this.position = {x: 0, y: 0.8, z: 0}; // x, y, z 
-        this.speed = {x: 0, y: 0, z: 0}; //x, y, z
-        this.friction = {x: 0.8, y: 1, z: 0.99 }; //grande attrito sulla X, nullo sulla y, piccolo sulla z
+        this.position = {x: 0, y: 0.8, z: 0}; //position of the roomba
+        this.speed = {x: 0, y: 0, z: 0}; //speed of the roomba
+        this.friction = {x: 0.8, y: 1, z: 0.99 }; //large friction on X, zero on y, small on z
         this.facing = 0;
         this.steering = 0;
         this.n_step = 0;
         this.maxAcceleration  = 0.005;
-        this.grip = 0.35; // quanto il facing macchina si adegua velocemente allo sterzo
-        this.velSterzo = 3.2;         // A
-        this.velRitornoSterzo = 0.84; // B, sterzo massimo = A*B / (1-B)
+        this.grip = 0.35; //how quickly the facing car adjusts to the steering
+        this.velSterzo = 3.2;         
+        this.velRitornoSterzo = 0.84;
         //Dict to track which key is being pressed
         this.keyPressed = { w: false, a: false, s: false, d: false }
     }
     
-    //Do a physics step, independent from the rendering. 
+    /**
+     * THis method is used to move the roomba
+     * @returns the new position of the roomba
+     */
     moveRoomba(){
         //Speed in space
         var roombaSpeed = {x : 0, y : 0, z : 0}; //x, y, z
@@ -42,10 +44,8 @@ export class Roomba {
         roombaSpeed.x *= this.friction.x;
         roombaSpeed.y *= this.friction.y;
         roombaSpeed.z *= this.friction.z;
-        //MISSING ROTAZIONE MOZZO RUOTE
         
-        // l'orientamento del mouse segue quello dello sterzo
-        // (a seconda della velocita' sulla z)
+        //roomba's orientation follows that of the steering depending on the speed on the z
         this.facing = this.facing - (roombaSpeed.z * this.grip) * this.steering;
         
         //Back to speed coordinate world
@@ -58,11 +58,14 @@ export class Roomba {
         let y = this.position.y;
         let z = this.position.z;
         let collision = false;
+
+        //check collision with objects
         for(let bound in objs_bounds) {
             if(!collision)
-                collision = this.#checkBounds(objs_bounds[bound]) && !collision;
+                collision = this.checkBounds(objs_bounds[bound]) && !collision;
         }
-        if(this.#checkBounds(floor_bounds) && !collision) {
+        //if roomba is inside the floor and there is no collision with objects, move the roomba
+        if(this.checkBounds(floor_bounds) && !collision) {
             this.position.x = x = this.position.x + this.speed.x;
             this.position.y = y = this.position.y + this.speed.y;
             this.position.z = z = this.position.z + this.speed.z;
@@ -70,7 +73,13 @@ export class Roomba {
         return {x: x, y: y, z: z};
     }
 
-    
+    /**
+     * This method is used to check if the roomba has collided with an object (mites, debris or boss)
+     * @param {*} mites_position is an array of the positions of the mites
+     * @param {*} debris_position is an array of the positions of the debris
+     * @param {*} bossPosition is an array of the positions (each life corresponds to a new position) of the boss
+     * @returns an array of booleans for mites, debris and boss, each boolean corresponds to a mite/debris/boss and is true if the mite/debris/boss has been hit
+     */
     collisionChecker(mites_position, debris_position, bossPosition) {
         const mites = [];
         var gameover = false;
@@ -102,6 +111,7 @@ export class Roomba {
         return {mites, gameover, boss};
     }
     
+    //listeners for the keyboard and touch events
     setRoombaControl = () => {
         //Check if the device is a mobile or a desktop
         if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
@@ -113,6 +123,8 @@ export class Roomba {
             window.addEventListener("keyup", this.keyUpEvents, true);
         }
     }
+
+    /** All the following methods are used to handle the keyboard and touch events */
 
     keyDownEvents = (event) => {
         switch (event.key) {
@@ -177,7 +189,8 @@ export class Roomba {
         if (x >= 178 && y >= 356 && x <= 199 && y <= 380) this.keyPressed.d = false;
     }
 
-    #checkBounds(boundsCoords) {
+    //This method is used to check if the roomba is inside the bounds a given area
+    checkBounds(boundsCoords) {
         return this.position.x + this.speed.x <= boundsCoords.x1 && this.position.x + this.speed.x >= boundsCoords.x2 &&
             this.position.z + this.speed.z <= boundsCoords.z1 && this.position.z + this.speed.z >= boundsCoords.z2;
     }

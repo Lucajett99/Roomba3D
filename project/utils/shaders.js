@@ -21,37 +21,6 @@ const colorFragShader= `
 
 
 
-const vertShader =  `
-attribute vec4 a_position;
-attribute vec3 a_normal;
-
-uniform mat4 u_projection;
-uniform mat4 u_view;
-uniform mat4 u_world;
-
-varying vec3 v_normal;
-
-void main() {
-  gl_Position = u_projection * u_view * u_world * a_position;
-  v_normal = mat3(u_world) * a_normal;
-}
-`;
-
-const fragShader = `
-  precision mediump float;
-
-  varying vec3 v_normal;
-
-  uniform vec4 u_diffuse;
-  uniform vec3 u_lightDirection;
-
-  void main () {
-    vec3 normal = normalize(v_normal);
-    float fakeLight = dot(u_lightDirection, normal) * .5 + .5;
-    gl_FragColor = vec4(u_diffuse.rgb * fakeLight, u_diffuse.a);
-  }
-  `;
-
 
 //SKYBOX SHADERS 
 const skyVertShader = `
@@ -80,7 +49,7 @@ const skyFragShader = `
     }
     `;
 
-  const sunVertShader = `
+  const vertShader = `
 		attribute vec4 a_position;
 		attribute vec2 a_texcoord;
 		attribute vec3 a_normal;
@@ -110,7 +79,7 @@ const skyFragShader = `
 		  v_texcoord = a_texcoord;
         }`;
           
-		const sunFragShader = `
+		const fragShader = `
 		precision mediump float;
 
 		// Passed in from the vertex shader.
@@ -156,4 +125,4 @@ const skyFragShader = `
 
 
 
-export {colorVertShader, colorFragShader, vertShader, fragShader, skyVertShader, skyFragShader, sunVertShader, sunFragShader};
+export {colorVertShader, colorFragShader, vertShader, fragShader, skyVertShader, skyFragShader};

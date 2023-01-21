@@ -1,6 +1,7 @@
+//This class is used to create a light object that will be used in the scene
 export class Light {
     constructor() {
-        this.position = {x: 10, y: 220, z: 250};
+        this.position = {x: 10, y: 220, z: 250}; 
         this.target = {x: 0, y: 0, z: 0};
 
         this.width_projLight= 3000;
@@ -13,6 +14,8 @@ export class Light {
         this.WorldMatrix = null;
         this.ProjectionMatrix = null;
     }
+
+    /** All the following methods are used for changing the light from the sliders */
 
     updateLightx = (event, ui) => {
         this.position.x = ui.value;
