@@ -55,9 +55,9 @@ async function main () {
     update();
     const animation = window.requestAnimationFrame(update);
     const loadingScreen = document.querySelector('.loading-screen');
-    /*setTimeout(function() {
+    setTimeout(function() {
         loadingScreen.style.display = 'none';
-    }, 5000);*/
+    }, 5000);
     
 
 /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/

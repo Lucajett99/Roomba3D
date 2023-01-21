@@ -3,10 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="myStyle.css">
-  </link>
-  <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
+  <link rel="stylesheet" href="myStyle.css"></link>
+  <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet'></link>
   <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet"></link>
+  <link rel="shortcut icon" href="#"></link>
   <style>
     @import url('https://fonts.cdnfonts.com/css/games');
     </style>
@@ -17,10 +17,10 @@
   <script>
     var shadow_enable = false;
   </script>
-  <!--<div class="loading-screen">
+  <div class="loading-screen">
     <p class="loading_content" style="margin-bottom: 0%"> Game Loading </p>
     <p id="loading_text" class="loading_content" style="margin-top: 0%"> &nbsp; </p>
-  </div>-->
+  </div>
   <div class="container" id="canvas_container">
       <canvas width="1100" height="600" id="myCanvas"></canvas>
       <canvas width="1100" height="200" id="text"></canvas>
@@ -49,7 +49,7 @@
     // Crea una funzione che aggiunge un punto alla stringa ogni secondo
     function addDot() {
         loadingText += " .";
-        //const loading_text = document.getElementById("loading_text").innerHTML = loadingText;
+        const loading_text = document.getElementById("loading_text").innerHTML = loadingText;
     }
 
     // Utilizza setInterval per eseguire la funzione ogni secondo

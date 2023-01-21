@@ -60,9 +60,9 @@ export class Roomba {
         let collision = false;
         for(let bound in objs_bounds) {
             if(!collision)
-                collision = this.#checkBounds(objs_bounds[bound]) && !collision;
+                collision = this.checkBounds(objs_bounds[bound]) && !collision;
         }
-        if(this.#checkBounds(floor_bounds) && !collision) {
+        if(this.checkBounds(floor_bounds) && !collision) {
             this.position.x = x = this.position.x + this.speed.x;
             this.position.y = y = this.position.y + this.speed.y;
             this.position.z = z = this.position.z + this.speed.z;
@@ -177,7 +177,7 @@ export class Roomba {
         if (x >= 178 && y >= 356 && x <= 199 && y <= 380) this.keyPressed.d = false;
     }
 
-    #checkBounds(boundsCoords) {
+    checkBounds(boundsCoords) {
         return this.position.x + this.speed.x <= boundsCoords.x1 && this.position.x + this.speed.x >= boundsCoords.x2 &&
             this.position.z + this.speed.z <= boundsCoords.z1 && this.position.z + this.speed.z >= boundsCoords.z2;
     }

@@ -10,11 +10,11 @@ export class Obj {
 
     async loadObject(obj, texture) {
         if(this.name == 'skybox') {
-            this.#loadSkyBox();
+            this.loadSkyBox();
             return;
         }
         else if(this.name == 'floor') {
-            this.#loadFloor(texture);
+            this.loadFloor(texture);
             return;
         }
         else {
@@ -59,7 +59,7 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
-    #loadFloor(texture) {
+    loadFloor(texture) {
 		const S = 70; 		
 		const H = 0; 
 		const textureCoords = [ 0,0, 1,0, 0,1, 1,1,];
@@ -98,7 +98,7 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo)
     }
 
-    #loadSkyBox(){
+    loadSkyBox(){
         this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, {
            position: {
                data: new Float32Array([
