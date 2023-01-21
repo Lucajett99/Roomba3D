@@ -5,15 +5,14 @@ body {
 .loading-screen {
     position: absolute;
     width: 1100px;
-    height: 600px;
+    height: 604px;
     background-color: rgba(0,0,0,1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 5;
-    border: thin inset rgba(0,0,0,0.88);
-    
+    border: thin inset rgba(0,0,0,0.88);    
 }
 
 .loading_content {
@@ -61,20 +60,11 @@ body {
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
-  }
-
-
-/*#text {
-    background: transparent;
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-}*/
+}
 
 
 #text {  
-    background-color: rgb(24, 24, 24);  /* needed because we setcanvas bg color to white */
+    background-color: rgb(24, 24, 24); 
     position: absolute;
     z-index: 2;
     border: thin inset rgba(0,0,0,0.88);
