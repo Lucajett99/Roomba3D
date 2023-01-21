@@ -1,9 +1,9 @@
 import { skyVertShader, skyFragShader, sunVertShader, sunFragShader, colorVertShader, colorFragShader } from './utils/shaders.js';
 import { Roomba } from './utils/Roomba.js';
-import { Geometries } from './utils/Geometries.js';
+import { SceneManager } from './utils/SceneManager.js';
 import { Camera } from './utils/Camera.js';
 import { Light } from './utils/Light.js';
-import { createTextureLight, getManipulationPanel, degToRad, depthFramebuffer, depthTexture, depthTextureSize, drawTextInfo, drawGameover, drawWin } from './utils/utils.js';
+import { createTextureLight, getManipulationPanel, degToRad, depthFramebuffer, depthTexture, depthTextureSize, drawInfo, drawGameover, drawWin } from './utils/utils.js';
 "use strict";
 
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
@@ -18,7 +18,7 @@ var doneSomething = false;
 
 const camera = new Camera();
 const roomba = new Roomba();
-const geometries = new Geometries();
+const sceneManager = new SceneManager();
 const light = new Light();
 /*-------------------------------------------------------------------------------------------------------------- */
 
@@ -29,13 +29,13 @@ async function main () {
     var sunProgramInfo = webglUtils.createProgramInfo(gl, [sunVertShader, sunFragShader])
     var colorProgramInfo = webglUtils.createProgramInfo(gl, [colorVertShader, colorFragShader])
 
-    await geometries.setGeo(sunProgramInfo);
+    await sceneManager.setObjects();
     createTextureLight(); //ombre
     getManipulationPanel(); //get manipulation (lights, shadows, camera) panel   
 
-    webglLessonsUI.setupSlider("#LightX", {value: 10, slide: light.updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightY", {value: 220, slide: light.updateLighty, min: 100, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#LightZ", {value: 250, slide: light.updateLightz, min: 100, max: 350, step: 1});
+    webglLessonsUI.setupSlider("#Light_X", {value: 10, slide: light.updateLightx, min: 0, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#Light_Y", {value: 220, slide: light.updateLighty, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#Light_Z", {value: 250, slide: light.updateLightz, min: 100, max: 350, step: 1});
 
     const button_camera_anteriore = document.getElementById("button_camera_anteriore");
     button_camera_anteriore.addEventListener("click", camera.change_cameraAnteriore);
@@ -64,8 +64,8 @@ async function main () {
     function update(time){
         if(roomba.n_step * PHYS_SAMPLING_STEP <= timeNow){ //skip the frame if the call is too early
             const position = roomba.moveRoomba();
-            //update the position of the roomba in geometries for the drawing
-            geometries.roomba.changePosition(position.x , position.y, position.z);
+            //update the position of the roomba in sceneManager for the drawing
+            sceneManager.roomba.changePosition(position.x , position.y, position.z);
             roomba.setRoombaControl(canvas, roomba);
             roomba.n_step = roomba.n_step + 1; 
             doneSomething = true;
@@ -131,13 +131,13 @@ async function main () {
 
         camera.updateCamera(posX, posY, posZ, facing);
 
-        if(geometries.checkRender()) {
-            drawTextInfo(geometries.checkMites, geometries.bossInfo.lifes);
-            geometries.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection);
+        if(sceneManager.checkRender()) {
+            drawInfo(sceneManager.checkMites, sceneManager.bossInfo.lifes);
+            sceneManager.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection);
             drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, sunProgramInfo,time);
         }
         else {
-            geometries.gameover ? drawGameover(animation) : drawWin(animation);
+            sceneManager.gameover ? drawGameover(animation) : drawWin(animation);
         }
 
     }    
@@ -175,26 +175,26 @@ async function main () {
             });
         }
        
-        geometries.floor.drawFloor(programInfo);        
-        geometries.roomba.drawObject(programInfo, {x: 3, y: 3, z: 3}, degToRad(roomba.facing));
-        geometries.updateGame(roomba);//check if roomba had collisions
-        geometries.table.drawObject(programInfo, {x: 1, y: 1, z: 1});
-        geometries.sofa.drawObject(programInfo, {x: 15, y: 30, z: 20}, degToRad(180));
-        geometries.cabinet.drawObject(programInfo, {x: 1, y: 1, z: 1});
-        geometries.tv.drawObject(programInfo, {x: 10, y: 10, z: 10});
-        if(!geometries.bossInfo.final) {
-            for (let mite in geometries.mites) {
-                if(!geometries.checkMites[mite]) geometries.mites[mite].drawObject(programInfo, {x: 2.5, y: 2.5, z: 2.5}, time);
+        sceneManager.floor.drawFloor(programInfo);        
+        sceneManager.roomba.drawObject(programInfo, {x: 3, y: 3, z: 3}, degToRad(roomba.facing));
+        sceneManager.updateGame(roomba);//check if roomba had collisions
+        sceneManager.table.drawObject(programInfo, {x: 1, y: 1, z: 1});
+        sceneManager.sofa.drawObject(programInfo, {x: 15, y: 30, z: 20}, degToRad(180));
+        sceneManager.cabinet.drawObject(programInfo, {x: 1, y: 1, z: 1});
+        sceneManager.tv.drawObject(programInfo, {x: 10, y: 10, z: 10});
+        if(!sceneManager.bossInfo.final) {
+            for (let mite in sceneManager.mites) {
+                if(!sceneManager.checkMites[mite]) sceneManager.mites[mite].drawObject(programInfo, {x: 2.5, y: 2.5, z: 2.5}, time);
             }
-            for (let debris in geometries.debris) {
-                geometries.debris[debris].drawObject(programInfo, {x: 10, y: 20, z: 10});
+            for (let debris in sceneManager.debris) {
+                sceneManager.debris[debris].drawObject(programInfo, {x: 10, y: 20, z: 10});
             }
         } else {
-            if(geometries.bossInfo.lifes > 0) {
-                for (let debris in geometries.debris) {
-                    geometries.debris[debris].drawObject(programInfo, {x: 10, y: 20, z: 10});
+            if(sceneManager.bossInfo.lifes > 0) {
+                for (let debris in sceneManager.debris) {
+                    sceneManager.debris[debris].drawObject(programInfo, {x: 10, y: 20, z: 10});
                 }
-                geometries.bossMite[geometries.bossInfo.lifes - 1].drawObject(programInfo, {x: 20, y: 20, z: 20}, time);
+                sceneManager.bossMite[sceneManager.bossInfo.lifes - 1].drawObject(programInfo, {x: 20, y: 20, z: 20}, time);
             }
         }
     }  

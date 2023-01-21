@@ -1,14 +1,14 @@
 import { Obj } from "./Obj.js";
 
-export class Geometries {
+export class SceneManager {
     constructor(canvas) {
         this.roomba = new Obj("roomba");
         this.floor = new Obj("floor");
-        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
-        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
+        this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
+        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
         //this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -60}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: 30, y: 0, z: -5})];
         this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
-        this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: 5, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
+        this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: -17, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
         this.table = new Obj("table", {x: -30, y: 6.5, z: 30}); 
         this.sofa = new Obj("sofa", {x: 30, y: 0, z: 30});
         this.cabinet = new Obj("tv_cabinet", {x: 30, y: -1, z: -25});
@@ -23,7 +23,7 @@ export class Geometries {
         this.gameover = false;
     }
 
-    async setGeo() {
+    async setObjects() {
         await this.roomba.loadObject("resources/objs/roomba.obj", "resources/images/roomba_texture.jpg");
         await this.floor.loadObject(null, "resources/images/parquet_texture.jpg");
         await this.table.loadObject("resources/objs/table.obj", "resources/images/white_wood_texture.jpg");

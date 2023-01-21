@@ -274,7 +274,7 @@ function parseOBJ(text) {
 
 function getManipulationPanel() {
     const manipulation_div = document.getElementById('manipulation');
-    manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Prospettiva </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='LightX'></div> <div id='LightY'></div> <div id='LightZ'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
+    manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Prospettiva </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='Light_X'></div> <div id='Light_Y'></div> <div id='Light_Z'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
 }
 
 
@@ -319,7 +319,7 @@ function drawGameover(animation) {
     ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 280, 350);
 }
 
-function drawTextInfo(parassiti, bossLife){
+function drawInfo(parassiti, bossLife){
     const n_parassiti = parassiti.length;
     const parassiti_raccolti = parassiti.filter(value => value === true).length;
     
@@ -383,4 +383,4 @@ function drawTextInfo(parassiti, bossLife){
 
 
 
-export {objs_bounds, floor_bounds, depthFramebuffer, depthTexture, depthTextureSize, getManipulationPanel, drawWin, drawGameover, drawTextInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
+export {objs_bounds, floor_bounds, depthFramebuffer, depthTexture, depthTextureSize, getManipulationPanel, drawWin, drawGameover, drawInfo, loadObj, loadTextureFromImg, degToRad, radToDeg, createTextureLight, loadSkyboxTexture};
