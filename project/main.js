@@ -61,10 +61,9 @@ async function main () {
     const animation = window.requestAnimationFrame(update);
     //set the loading screen invisible after 5 seconds
     const loadingScreen = document.querySelector('.loading-screen');
-    loadingScreen.style.display = 'none';
-    /*setTimeout(function() {
+    setTimeout(function() {
         loadingScreen.style.display = 'none';
-    }, 5000);*/
+    }, 5000);
     
 
 /*-----------------------------------------------------SERIE DI FUNZIONI UTILIIZZATE-----------------------------------------------------------*/

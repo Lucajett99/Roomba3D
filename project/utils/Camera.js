@@ -24,9 +24,11 @@ export class Camera {
      */
     createCamera() {
         const camera = m4.lookAt(this.position, this.target, up);
-        wasd_canvas.addEventListener('mousedown', this.onMouseDown);
-        wasd_canvas.addEventListener('mouseup', this.onMouseUp);
-        wasd_canvas.addEventListener('mousemove', this.onMouseMove);
+        if( !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
+            wasd_canvas.addEventListener('mousedown', this.onMouseDown);
+            wasd_canvas.addEventListener('mouseup', this.onMouseUp);
+            wasd_canvas.addEventListener('mousemove', this.onMouseMove);
+        }
         return camera;
     }
 
