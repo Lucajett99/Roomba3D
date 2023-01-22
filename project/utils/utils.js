@@ -1,31 +1,38 @@
 "use strict";
-//Raccoglie diverse funzioni come il caricamento di una texture da un'immqgine,
-// la crezione di una texture da applicarea allo skybox,
-// e tutto ciò che riguarda il caricamento di una mesh da un Obj
-
+/**
+ * This file contains several functions that are used in the project.
+ * Such as: the function to load an obj from local file, the function to load the texture of the objects, the function to draw in 2D graphics, and other utility functions.
+ */
 
 //Bounds of the objs [tv_cabinet, sofa, foots_table]
 const objs_bounds = [{x1: 48.5, x2: 11.5, z1: -15, z2: -35}, {x1: 48.5, x2: 11.5, z1: 42, z2: 18}, {x1: -17.5, x2: -25.5, z1: 21.5, z2: 13},  {x1: -19, x2: -26, z1: 47, z2: 38.5}, {x1: -35.5, x2: -41.5, z1: 21.5, z2: 13}, {x1: -35, x2: -41.5, z1: 47, z2: 38.5}];
-
+//Bounds of the floor
 const floor_bounds = {x1: 67.8, x2: -67.8, z1: 67.7, z2: -67.7};
 
+//function used to transform degrees in radians
 function degToRad(d) {
 	return d * Math.PI / 180;
 }
 
+//function used to transform radians in degrees
 function radToDeg(r) {
 	return r * 180 / Math.PI;
 }
 
+//function used to check if a value is a power of 2
 function isPowerOf2(value) {
     return (value & (value - 1)) == 0;		
 }
 
-//Funzione per creare la texture dello skybox
+/**
+ * This function is used to load the skybox texture.
+ * @returns the texture of the skybox
+ */
 function loadSkyboxTexture() {
     const texture = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
     
+    //set all the faces of the skybox
 	const faceInfos = [{target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'resources/images/carta_da_parati.jpg',},
 	{target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'resources/images/carta_da_parati.jpg',},
 	{target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'resources/images/carta_da_parati.jpg',},
@@ -59,15 +66,17 @@ function loadSkyboxTexture() {
         });
     });
 
-
     gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
     return texture;
 }
 
-
-//Funzone per caricare una texture
+/**
+ * This function is used to load the texture from an image
+ * @param {String} imageSrc is the path of the image
+ * @returns the texture loaded from the image
+ */
 function loadTextureFromImg(imageSrc) {
     var texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -107,9 +116,11 @@ function loadTextureFromImg(imageSrc) {
 
 
 
-
+//export variables for the depth texture
 var depthFramebuffer, depthTextureSize, depthTexture, unusedTexture;
-//funzione per creare depth framebuffer
+/**
+ * This function is used to create the depth framebuffer
+ */
 function createTextureLight(){
 	depthTexture = gl.createTexture();
 	depthTextureSize = 1024;
@@ -175,6 +186,7 @@ function createTextureLight(){
 //*********************************************************************************************************************
 // MESH.OBJ 
 
+//obj file loader
 async function loadObj(url) {
     const response = await fetch(url);
     if(response.ok){
@@ -183,7 +195,11 @@ async function loadObj(url) {
     }
 }
 
-
+/**
+ * This function is used to parse the obj file
+ * @param {String} text is the path of the obj file
+ * @returns a webglVertexData array 
+ */
 function parseOBJ(text) {
 	var webglVertexData = [
 	    [],   // positions
@@ -212,8 +228,6 @@ function parseOBJ(text) {
 		  }
 		  const objIndex = parseInt(objIndexStr);
 		  const index = objIndex + (objIndex >= 0 ? 0 : objVertexData[i].length);
-		  //webglVertexData pubblica
-		  //console.log(i);
 		  webglVertexData[i].push(...objVertexData[i][index]);
 		});
 	}
@@ -226,7 +240,7 @@ function parseOBJ(text) {
 	      objNormals.push(parts.map(parseFloat));
 	    },
 	    vt(parts) {
-	      // should check for missing v and extra w?
+	      //should check for missing v and extra w?
 	      objTexcoords.push(parts.map(parseFloat));
 	    },
 	    f(parts) {
@@ -239,39 +253,37 @@ function parseOBJ(text) {
 	    },
 	  };
 
-	//	\w* = almeno una lettere o un numero
-	// ?:x = meccia gli spazi singoli bianchi (anche più di uno)
-	// . = classi di caratteri, meccia ogni singolo carattere tranne i terminatori di linea
+	//	\w* = at least one letter or number
+	// ?:x = beat single whitespace (even more than one)
+	// . = character classes, metch any single character except line terminators
 	const keywordRE = /(\w*)(?: )*(.*)/;
 	const lines = text.split('\n');
-	//let identifica una variabile in un determinato blocco di codice
 	for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
 	const line = lines[lineNo].trim();
 	if (line === '' || line.startsWith('#')) {
-		//la riga è vuota o è un commento
+		//the line is either empty or a comment
 	  continue;
 	}
-	//ritorna la stringa 
 	const m = keywordRE.exec(line);
-	//console.log(m);
 	if (!m) {
 	  continue;
 	}
 	const [, keyword, unparsedArgs] = m;
 	const parts = line.split(/\s+/).slice(1);
 	const handler = keywords[keyword];
-	//console.log(parts);
 	if (!handler) {
-	  //console.warn('unhandled keyword:', keyword, 'at line', lineNo + 1);
 	  continue;
 	}
 
-	handler(parts, unparsedArgs); //gestisce gli argomenti che non hai gestito
+	handler(parts, unparsedArgs); //handles arguments you didn't handle
 	}
 
 	return webglVertexData;
 }
 
+/**
+ * This function is used to get the HTML for the manipulation panel
+ */
 function getManipulationPanel() {
     const manipulation_div = document.getElementById('manipulation');
     manipulation_div.innerHTML = "<div id='bottoni'> <div id='visuale'> <h2>Cambia Prospettiva </h2> </div> <input type='button' id='button_camera_posteriore' value='Posteriore' /> <input type='button' id='button_camera_anteriore' value='Anteriore' /> <input type='button' id='button_camera_alta' value='Alta' /> <input type='button' id='button_camera_tv' value='TV' /> </div> <div id='lightManipulation'> <div id='visuale'> <h2> Cambia Luci <h2> </div> <div id='Light_X'></div> <div id='Light_Y'></div> <div id='Light_Z'></div> <div id='shadow_manipulation'>  <div id='visuale'> <h2> Imposta Ombre <h2> </div> <label class='switch'> <input type='checkbox' id='switch_shadow'> <span class='slider round'></span> </label> </div></div> ";
@@ -280,13 +292,14 @@ function getManipulationPanel() {
 
 /*--------------------------------------------------TEXT DRAWING---------------------------------------------------------------------------- */
 
+/**
+ * This function is used to draw the winner text on the canvas
+ */
 function drawWin(animation){
     window.cancelAnimationFrame(animation);
-    window.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            window.location.reload();
-            event.preventDefault();
-        }
+    window.addEventListener("click", function(event) {
+        window.location.reload();
+        event.preventDefault();
     });
     ctx.canvas.height = 600;
     ctx_wasd.clearRect(0, 0, ctx_wasd.canvas.width, ctx_wasd.canvas.height);
@@ -297,16 +310,17 @@ function drawWin(animation){
     ctx.fillText("COMPLIMENTI", 330, 200);
     ctx.fillText("  HAI VINTO ", 330, 300);
     ctx.font = '18pt Games, sans-serif';
-    ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 240, 400);
+    ctx.fillText("Se vuoi rigiocare fai click o tocca lo schermo e attendi", 175, 400);
 }
 
+/**
+ * This function is used to draw the gameover text on the canvas
+ */
 function drawGameover(animation) {
     window.cancelAnimationFrame(animation);
-    window.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            window.location.reload();
-            event.preventDefault();
-        }
+    window.addEventListener("click", function(event) {
+        window.location.reload();
+        event.preventDefault();
     });
 	ctx.canvas.height = 600;
     ctx_wasd.clearRect(0, 0, ctx_wasd.canvas.width, ctx_wasd.canvas.height);
@@ -316,9 +330,12 @@ function drawGameover(animation) {
     ctx.fillStyle = 'green';
     ctx.fillText("GAME OVER", 350, 300);
     ctx.font = '20pt VT323, sans-serif'; 
-    ctx.fillText("Se vuoi rigiocare premi il tasto invio e attendi", 280, 350);
+    ctx.fillText("Se vuoi rigiocare fai click o tocca lo schermo e attendi", 235, 350);
 }
 
+/**
+ * This function is used to draw the info on the canvas
+ */
 function drawInfo(parassiti, bossLife){
     const n_parassiti = parassiti.length;
     const parassiti_raccolti = parassiti.filter(value => value === true).length;

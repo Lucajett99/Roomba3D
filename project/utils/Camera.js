@@ -24,9 +24,9 @@ export class Camera {
      */
     createCamera() {
         const camera = m4.lookAt(this.position, this.target, up);
-        textCanvas.addEventListener('mousedown', this.onMouseDown);
-        textCanvas.addEventListener('mouseup', this.onMouseUp);
-        textCanvas.addEventListener('mousemove', this.onMouseMove);
+        wasd_canvas.addEventListener('mousedown', this.onMouseDown);
+        wasd_canvas.addEventListener('mouseup', this.onMouseUp);
+        wasd_canvas.addEventListener('mousemove', this.onMouseMove);
         return camera;
     }
 

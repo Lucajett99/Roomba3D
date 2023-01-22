@@ -7,9 +7,7 @@ export class SceneManager {
         this.roomba = new Obj("roomba");
         this.floor = new Obj("floor");
         this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35}), new Obj("mite2", {x: 40, y: 0, z: 10}), new Obj("mite3", {x: 0, y: 0, z: 50}), new Obj("mite4", {x: -20, y: 0, z: -41})]; 
-        //this.mites = [new Obj("mite1", {x: -40, y: 0, z: -35})]; 
         this.bossMite = [new Obj("bossMite", {x: -20, y: 0, z: -60}), new Obj("bossMite", {x: -50, y: 0, z: 40}), new Obj("bossMite", {x: 30, y: 0, z: -5})];
-        //this.bossMite = [new Obj(new Obj("bossMite", {x: -50, y: 0, z: 40}))];
         this.debris = [new Obj("debris1", {x: -20, y: 0, z: -20}), new Obj("debris2", {x: -17, y: 0, z: 30}), new Obj("debris3", {x: 40, y: 0, z: 50}), new Obj("debris4", {x: 30, y: 0, z: -50})];
         this.table = new Obj("table", {x: -30, y: 6.5, z: 30}); 
         this.sofa = new Obj("sofa", {x: 30, y: 0, z: 30});

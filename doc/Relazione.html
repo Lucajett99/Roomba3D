@@ -43,7 +43,7 @@
         <div id="header">
             <h1>Roomba 3D</h1>
             <h2>Progetto per il corso di Computer Graphics</h2>
-            <h3>Luca Genova mat.0001038843 Magistrale in Informatica</h3>
+            <h3>Luca Genova 0001038843</h3>
 
             <div>
                 <img src="./images/Prima_vista.jpg" height="420">
@@ -56,7 +56,7 @@
             </p>
             <p>
                 Il gioco consiste nel controllare Roomba e pulire una stanza della casa eliminando i parassiti e evitando di camminare sui detriti metallici. Il giocatore deve eliminare tutti i parassiti prima di affrontare il boss, un parassita con tre vite che può teletrasportarsi in diverse posizioni dopo avergli eliminato una vita. Il giocatore deve sconfiggere il boss per completare il gioco e riportare la pace nella casa.<br>
-                Il gioco è anticipato da una schermata di loading, bisogna quindi attendere che essa scompaia.
+                Il gioco è anticipato da una schermata di caricamento (è semplicemente un div che rimane attivo per 5 secondi), bisogna quindi attendere che essa scompaia.
             </p>
             <br>
             <h2>Struttura del progetto</h2>
@@ -104,7 +104,7 @@
                 <img src="./images/Tv.png" height="350">
             </div>
             <p>
-                Come già accennato ogni oggetto è un'istanza della classe Obj, che possiede campi come la posizione dell'oggetto, il buffer delle infromazioni e la texture. Ogni istanza ha il metodo di caricamento dell'.obj (loadObject()) e di disegno (drawObject()) che viene chiamato all'interno del metodo di disegno della scena finale (drawScene()) nel main. In particolare le mesh vengono importate da file locali .obj tramite il metodo dell'istanza, mezionato poco prima, che richiama la funzione "loadObj" nel file "utils.js".
+                Come già accennato ogni oggetto è un'istanza della classe Obj, che possiede campi come la posizione dell'oggetto, il buffer delle informazioni e la texture. Ogni istanza ha il metodo di caricamento dell'.obj (loadObject()) e di disegno (drawObject()) che viene chiamato all'interno del metodo di disegno della scena finale (drawScene()) nel main. In particolare le mesh vengono importate da file locali .obj tramite il metodo dell'istanza, mezionato poco prima, esso infine chiamerà la funzione "parseOBJ()" situata all'interno del file "utils.js" che parsa iil file e permette di estrarre le informazioni necessarie.
             </p>
             <br>
             <h2>Le texture</h2>
@@ -146,7 +146,7 @@
                 La logica di movimento di Roomba è stata ispirata dal file cg-car2.js fornito durante la lezione. Roomba ha la possibilità di incontrare ostacoli come detriti, parassiti o altri oggetti presenti nella stanza. In caso di collisione con i detriti, il gioco termina mentre in caso di collisione con i parassiti essi vengono risucchiati (avendone quindi uno in meno da eliminare). In caso di collisione con gli altri oggetti, Roomba semplicemente "sbatterà" contro di essi senza subire alcun danno.<br>
                 Per implementare la funzione di collisione, abbiamo utilizzato le coordinate x, y, z di Roomba per determinare la sua posizione nello spazio virtuale del gioco. Utilizzando queste informazioni, siamo stati in grado di confrontare la posizione di Roomba con quella degli oggetti presenti nella stanza, e in caso di sovrapposizione, rilevare una collisione. In questo modo, siamo stati in grado di determinare quando Roomba entra in contatto con detriti, parassiti e altri oggetti nella stanza, consentendo al giocatore di interagire con loro in modo appropriato.<br>
                 <br>
-                Per rendere l'esperienza di gioco più realistica, abbiamo deciso di far ruotare i parassiti presenti nella scena. Questa funzione di rotazione è stata implementata utilizzando la libreria "m4.js" e in particolare la funzione "m4.yRotate(m, angleInRadians, dst)". Questo ci ha permesso di creare una maggiore dinamicità nella scena e di migliorare l'immersione del giocatore.
+                Per rendere l'esperienza di gioco più realistica, abbiamo deciso di far ruotare i parassiti presenti nella scena (come se stessero camminando). Questa funzione di rotazione è stata implementata utilizzando la libreria "m4.js" e in particolare la funzione "m4.yRotate(m, angleInRadians, dst)". Questo ci ha permesso di creare una maggiore dinamicità nella scena e di migliorare l'immersione del giocatore.
             </p>
             <br>
             <h2>Interazioni dell'utente</h2>
@@ -168,12 +168,12 @@
                 <p style="font-size:10pt">Versione Mobile</p>
             </div>
             <p>
-                Inoltre è possibile ripetere il gioco quando si vince o perde, come verrà mostrato sulla schermata, semplicemente cliccando il tasto enter. Esso semplicemente ricarica la pagina e ricomincia il gioco.
+                Inoltre è possibile ripetere il gioco quando si vince o perde, come verrà mostrato sulla schermata, semplicemente facendo click con il mouse o toccando lo schermo nel caso di un mobile. Esso semplicemente ricarica la pagina e ricomincia il gioco.
             </p>
             <br>
             <h2>Grafica 2D</h2>
             <p>
-                Per la grafica 2D, come si è potuto vedere nelle precedenti immagini, abbiamo inserito un'altro canvas della stessa larghezza ma con altezza più piccola, con l'asse z superiore al canvas pricipale (in modo da sovrapporlo), in basso disegnando in 2D, tramite l'utilizzo del .getContext("2d"), tutte le informazioni necessarie per il gioco, come i comandi e le informazioni sullo stato del gioco (parassiti da raccogliere e vite del boss).<br>
+                Per la grafica 2D, come si è potuto vedere nelle precedenti immagini, abbiamo inserito un'altro canvas della stessa larghezza ma con altezza più piccola e con l'asse z superiore al canvas pricipale (in modo da sovrapporlo). Esso è stato inserito in basso disegnandoci sopra in 2D, tramite l'utilizzo del .getContext("2d"), tutte le informazioni necessarie per il gioco, come i comandi e le informazioni sullo stato del gioco (parassiti da raccogliere e vite del boss).<br>
                 Inoltre abbiamo utilizzato la grafica 2D per disegnare le schermate finali di gameover e di vittoria (con diversi font) su un background nero, che vengono mostrate quando il giocatore perde o vince la partita. Tutte queste funzioni le trovate all'interno del file "utils.js": drawGameover(), drawWin(), drawInfo().<br>
             </p>
             <div class="images">
