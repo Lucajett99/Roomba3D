@@ -1,4 +1,5 @@
 import { degToRad } from "./utils.js";
+const fov = degToRad(60); //fov of camera
 const up = [0, 1, 0];
 const D = 17;
 
@@ -9,13 +10,16 @@ export class Camera {
         this.target = [0, 0, 0];  //the point the camera is looking at
         this.THETA = degToRad(86);
         this.PHI = degToRad(23);
+        this.WorldMatrix = null; //the world matrix of the camera
+        this.ViewMatrix = null; //the view matrix of the camera
+        this.ProjectionMatrix = null; //the projection matrix of the camera
         
         //variables that handle camera change
         this.cameraPosteriore = true;
         this.cameraAnteriore = false;
         this.cameraAlta = false;
-        this.cameraDragging = {isDragging: false, startX: null, startY: null}; // Variabili per memorizzare le coordinate del mouse quando si fa click e se l'utente sta trascinando il mouse
         this.cameraTv = false;
+        this.cameraDragging = {isDragging: false, startX: null, startY: null}; // Variabili per memorizzare le coordinate del mouse quando si fa click e se l'utente sta trascinando il mouse
     }
     
     /**
@@ -23,13 +27,17 @@ export class Camera {
      * @returns {Float32Array} the camera matrix
      */
     createCamera() {
-        const camera = m4.lookAt(this.position, this.target, up);
+        // Compute the camera's worldMatrix using look at.
+        this.WorldMatrix = m4.lookAt(this.position, this.target, up);
+        // Make a view matrix from the camera matrix.
+        this.ViewMatrix = m4.inverse(this.WorldMatrix);
+        // Compute a projection matrix using perspective
+        this.ProjectionMatrix = m4.perspective(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.1, 1200);
         if( !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
             wasd_canvas.addEventListener('mousedown', this.onMouseDown);
             wasd_canvas.addEventListener('mouseup', this.onMouseUp);
             wasd_canvas.addEventListener('mousemove', this.onMouseMove);
         }
-        return camera;
     }
 
     /**

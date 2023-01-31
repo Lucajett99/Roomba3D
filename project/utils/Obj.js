@@ -9,6 +9,12 @@ export class Obj {
         this.texture = null; //the texture of the object
     }
 
+    /**
+     * This method is used to load an object from a local file
+     * @param {String} obj is the path of the obj file
+     * @param {String} texture is the path of the texture file
+     * @returns null
+     */
     async loadObject(obj, texture) {
         //for the skybox and the floor we have to load the obj and the texture in a different way
         if(this.name == 'skybox') {
@@ -40,6 +46,7 @@ export class Obj {
      * @param {rotation} the rotation of the object (optional)
      */
     drawObject = (ProgramInfo, scale, rotation = 0) => {
+        //scale the object and translate it to the specified position
         let u_model = m4.scale(m4.translation(this.position.x, this.position.y, this.position.z), scale.x, scale.y, scale.z)
         u_model = m4.yRotate(u_model, rotation);
         webglUtils.setBuffersAndAttributes(gl, ProgramInfo, this.bufferInfo)
@@ -52,7 +59,7 @@ export class Obj {
         webglUtils.drawBufferInfo(gl, this.bufferInfo);
     }
 
-    //This method is used change the position of the objec (it is used only for roomba object)
+    //This method is used change the position of the object (it is used only for roomba object)
     changePosition(x, y, z) {
         this.position.x = x;
         this.position.y = y;
@@ -77,10 +84,10 @@ export class Obj {
 		const textureCoords = [ 0,0, 1,0, 0,1, 1,1,];
 
 		const arrays_floor = {
-		   position: 	{ numComponents: 3, data: [-S,H,-S, S,H,-S, -S,H,S,  S,H,S, ], },
+		   position: 	{ numComponents: 3, data: [-S,H,-S, S,H,-S, -S,H,S,  S,H,S,], },
 		   texcoord: 	{ numComponents: 2, data: textureCoords, },
 		   indices: 	{ numComponents: 3, data: [0,2,1, 	2,3,1,], },
-		   normal:		{ numComponents: 3, data: [0,1,0,	0,1,0,	0,1,0,	0,1,0,], },
+		   normal:		{ numComponents: 3, data: [0,1,0,	0,1,0,	0,1,0,	0,1,0,], }, // the triangles are oriented upward
 		};
 
 		this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, arrays_floor);
@@ -90,11 +97,12 @@ export class Obj {
 
     //This method is used to draw the skybox
     drawSkybox(gl, skyboxProgramInfo, view, projection) {
+        //is used to ensure that objects farther away are drawn last and thus covered by those closer to them
         gl.depthFunc(gl.LEQUAL)
 
         const viewMatrix = m4.copy(view);
 
-        // remove translations
+        //remove translations because the skybox must always stay in the same place
         viewMatrix[12] = 0;
         viewMatrix[13] = 0;
         viewMatrix[14] = 0;
@@ -114,6 +122,7 @@ export class Obj {
     loadSkyBox(){
         this.bufferInfo = webglUtils.createBufferInfoFromArrays(gl, {
            position: {
+            //quadrato di dimensioni 2x2
                data: new Float32Array([
                    -1, -1, // bottom-left triangle
                     1, -1,

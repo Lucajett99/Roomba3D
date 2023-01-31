@@ -9,11 +9,7 @@ import { createTextureLight, getManipulationPanel, degToRad, depthFramebuffer, d
 /*-------------------------------------------VARIABILI GLOBALI-------------------------------------------------*/
 var timeNow = 0; //timeNow is the time of the last frame
 var bias = -0.00005; //bias for the shadow
-const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight; //aspect of viewport
-const fieldOfViewRadians = degToRad(60); //field of view in y axis.
-const up = [0, 1, 0]  //se cambia up, ruota l'intero SDR, quindi cambiano gli assi
 const PHYS_SAMPLING_STEP = 20; 
-
 var doneSomething = false; 
 
 const camera = new Camera();
@@ -31,15 +27,15 @@ async function main () {
 
     //load objects with their textures
     await sceneManager.setObjects();
-    //this is called for shadows
+    //this is called for shadows (it creates the depth texture and the framebuffer)
     createTextureLight();
     //get manipulation (lights, shadows, camera) panel
     getManipulationPanel();    
 
     //the following lines are for the manipulation panel
-    webglLessonsUI.setupSlider("#Light_X", {value: 10, slide: light.updateLightx, min: 0, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#Light_Y", {value: 220, slide: light.updateLighty, min: 100, max: 450, step: 1});
-    webglLessonsUI.setupSlider("#Light_Z", {value: 250, slide: light.updateLightz, min: 100, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#Light_X", {value: 10, slide: light.updateLightx, min: -450, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#Light_Y", {value: 220, slide: light.updateLighty, min: -450, max: 450, step: 1});
+    webglLessonsUI.setupSlider("#Light_Z", {value: 250, slide: light.updateLightz, min: -450, max: 450, step: 1});
 
     const button_camera_anteriore = document.getElementById("button_camera_anteriore");
     button_camera_anteriore.addEventListener("click", camera.change_cameraAnteriore);
@@ -99,33 +95,23 @@ async function main () {
     function render(time) { 
         time *= 0.001;
         gl.enable(gl.DEPTH_TEST);
-        // first draw from the POV of the light
-        light.WorldMatrix = m4.lookAt(
-            [light.position.x, light.position.y, light.position.z],
-            [light.target.x, light.target.y, light.target.y],
-            up,                                				
-        );
+        // setup light's matrices
+        light.createLight();
 
-        //this is the projection matrix of the light
-        light.ProjectionMatrix = m4.perspective(
-            degToRad(light.fovLight),
-            light.width_projLight / light.height_projLight,
-            8,  	// near: top of the frustum
-        700);   // far: bottom of the frustum
-
+        //following lines are for the shadow
         gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
         gl.viewport(0, 0, depthTextureSize, depthTextureSize);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
         drawScene(light.ProjectionMatrix, light.WorldMatrix, m4.identity(), light.WorldMatrix, colorProgramInfo, time);
+
+        //following lines are for the scene
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         gl.clearColor(0, 0, 0, 1); //setta tutto a nero se 0,0,0,1
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-
         //the textureMatrix is a matrix that is used to transform the coordinates of the vertices for applying a texture
+        //this texture matrix is used to project the shadow texture onto the 3D object
         let textureMatrix = m4.identity();
         textureMatrix = m4.translate(textureMatrix, 0.5, 0.5, 0.5);
         textureMatrix = m4.scale(textureMatrix, 0.5, 0.5, 0.5);
@@ -133,14 +119,8 @@ async function main () {
         textureMatrix = m4.multiply(textureMatrix, light.ProjectionMatrix);
         textureMatrix = m4.multiply(textureMatrix, m4.inverse(light.WorldMatrix));
 
-        var projection = m4.perspective(fieldOfViewRadians, aspect, 0.1, 1200);
-
-        // Compute the camera's matrix using look at.
-        var myCamera = camera.createCamera();
-
-        // Make a view matrix from the camera matrix.
-        var view = m4.inverse(myCamera);
-
+        //setup camera's matrices
+        camera.createCamera();
         //check if the prospective of the camera is changed
         camera.updateCamera(roomba.position.x, roomba.position.y, roomba.position.z, roomba.facing);
 
@@ -149,9 +129,9 @@ async function main () {
             //draw the 2D graphics for the game info
             drawInfo(sceneManager.checkMites, sceneManager.bossInfo.lifes);
             //draw the skybox
-            sceneManager.skybox.drawSkybox(gl, skyboxProgramInfo, view, projection);
+            sceneManager.skybox.drawSkybox(gl, skyboxProgramInfo, camera.ViewMatrix, camera.ProjectionMatrix);
             //draw the scene
-            drawScene(projection, myCamera, textureMatrix, light.WorldMatrix, programInfo,time);
+            drawScene(camera.ProjectionMatrix, camera.WorldMatrix, textureMatrix, light.WorldMatrix, programInfo,time);
         }
         else {
             //if the game is over draw the gameover screen otherwise draw the win screen
@@ -162,17 +142,16 @@ async function main () {
 
     /**
      * This function is used to draw the scene
-     * @param {*} projectionMatrix is a matrix that is used to determinate the perspective of the camera
-     * @param {*} camera is the lookAt matrix 
+     * @param {*} projectionMatrix is a projection matrix
+     * @param {*} worldMatrix is the lookAt matrix 
      * @param {*} textureMatrix is the matrix that is used to transform the coordinates of the vertices for applying a texture
      * @param {*} lightWorldMatrix is thr matrix representing the position and orientation of light in 3D space
      * @param {*} programInfo is the rendering program
      * @param {*} time is the time of the frame
      */
-    function drawScene(projectionMatrix, camera, textureMatrix, lightWorldMatrix, programInfo,time) {
+    function drawScene(projectionMatrix, worldMatrix, textureMatrix, lightWorldMatrix, programInfo, time) {
         //for a view matrix take the inverse of lookAt matrix
-        //make a view matrix from the camera matrix
-        const viewMatrix = m4.inverse(camera);
+        const viewMatrix = m4.inverse(worldMatrix);
         gl.useProgram(programInfo.program);
     
         //check if the shadows are active
@@ -190,6 +169,7 @@ async function main () {
             });
         }
         if(shadow_enable == false){
+            //an identity texture matrix is set with scale to 0, so that no shadow is used
             textureMatrix = m4.identity();
             textureMatrix = m4.scale(textureMatrix, 0, 0, 0);
             webglUtils.setUniforms(programInfo, {

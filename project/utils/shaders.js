@@ -39,11 +39,12 @@ const skyFragShader = `
     precision mediump float;
     
     uniform samplerCube u_skybox;
-    uniform mat4 u_viewDirectionProjectionInverse; //?
+    uniform mat4 u_viewDirectionProjectionInverse;
     
     varying vec4 v_position;
     
     void main() {
+        //vertex position is transformed into a position in cubic texture space.
         vec4 t = u_viewDirectionProjectionInverse * v_position;
         gl_FragColor = textureCube(u_skybox, normalize(t.xyz/t.w));
     }
@@ -103,6 +104,7 @@ void main() {
 
     float light = dot(normal, u_reverseLightDirection);
 
+    //is used to obtain the projected position of the pixel on the screen
     vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
     float currentDepth = projectedTexcoord.z + u_bias;
 
@@ -114,7 +116,7 @@ void main() {
 
     // the 'r' channel has the depth values
     float projectedDepth = texture2D(u_projectedTexture, projectedTexcoord.xy).r;
-    float shadowLight = (inRange && projectedDepth <= currentDepth) ? u_shadowIntensity : u_lightIntensity; //2.5;
+    float shadowLight = (inRange && projectedDepth <= currentDepth) ? u_shadowIntensity : u_lightIntensity; 
 
     vec4 texColor = texture2D(u_texture, v_texcoord) * u_colorMult;
     gl_FragColor = vec4(texColor.rgb * light * shadowLight,	 texColor.a);

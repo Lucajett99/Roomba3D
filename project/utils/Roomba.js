@@ -25,7 +25,7 @@ export class Roomba {
     moveRoomba(){
         //Speed in space
         var roombaSpeed = {x : 0, y : 0, z : 0}; //x, y, z
-        //From speed world frame to speed car frame
+        //From speed world frame to speed roomba frame
         var cosf = Math.cos(this.facing * Math.PI / 180.0);
         var sinf = Math.sin(this.facing * Math.PI / 180.0);
         roombaSpeed.x = +cosf*this.speed.x - sinf*this.speed.z;
@@ -58,11 +58,11 @@ export class Roomba {
         let y = this.position.y;
         let z = this.position.z;
         let collision = false;
-
+        
         //check collision with objects
         for(let bound in objs_bounds) {
             if(!collision)
-                collision = this.checkBounds(objs_bounds[bound]) && !collision;
+            collision = this.checkBounds(objs_bounds[bound]) && !collision;
         }
         //if roomba is inside the floor and there is no collision with objects, move the roomba
         if(this.checkBounds(floor_bounds) && !collision) {
@@ -93,58 +93,64 @@ export class Roomba {
                 && this.position.z >= mites_position[i].z -5 && this.position.z <= mites_position[i].z + 5) {
                     mites[i] = true;
                 }
-        }
-
-        for(let i = 0; i < debris_position.length; i++) {
-            if (this.position.x >= debris_position[i].x - 5 && this.position.x <= debris_position[i].x + 5
-                && this.position.z >= debris_position[i].z - 5 && this.position.z <= debris_position[i].z + 5) {
-                gameover = true;
+            }
+            
+            for(let i = 0; i < debris_position.length; i++) {
+                if (this.position.x >= debris_position[i].x - 5 && this.position.x <= debris_position[i].x + 5
+                    && this.position.z >= debris_position[i].z - 5 && this.position.z <= debris_position[i].z + 5) {
+                        gameover = true;
+                    }
+                }
+                
+                if(bossPosition) {
+                    if (this.position.x >= bossPosition.x - 7 && this.position.x <= bossPosition.x + 7
+                        && this.position.z >= bossPosition.z - 7 && this.position.z <= bossPosition.z + 7) {
+                            boss = true;
+                        }
+                    }
+                    return {mites, gameover, boss};
+                }
+                
+                //listeners for the keyboard and touch events
+                setRoombaControl = () => {
+                    //Check if the device is a mobile or a desktop
+            if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
+                window.addEventListener("touchstart", this.touchDownEvents, true);
+                window.addEventListener("touchend", this.touchUpEvents, true);
+            }
+            else {
+                window.addEventListener("keydown", this.keyDownEvents, true);
+                window.addEventListener("keyup", this.keyUpEvents, true);
             }
         }
         
-        if(bossPosition) {
-            if (this.position.x >= bossPosition.x - 7 && this.position.x <= bossPosition.x + 7
-                && this.position.z >= bossPosition.z - 7 && this.position.z <= bossPosition.z + 7) {
-                    boss = true;
-                }
+        //This method is used to check if the roomba is inside the bounds a given area
+        checkBounds(boundsCoords) {
+            return this.position.x + this.speed.x <= boundsCoords.x1 && this.position.x + this.speed.x >= boundsCoords.x2 &&
+                this.position.z + this.speed.z <= boundsCoords.z1 && this.position.z + this.speed.z >= boundsCoords.z2;
         }
-        return {mites, gameover, boss};
-    }
-    
-    //listeners for the keyboard and touch events
-    setRoombaControl = () => {
-        //Check if the device is a mobile or a desktop
-        if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-            window.addEventListener("touchstart", this.touchDownEvents, true);
-            window.addEventListener("touchend", this.touchUpEvents, true);
-        }
-        else {
-            window.addEventListener("keydown", this.keyDownEvents, true);
-            window.addEventListener("keyup", this.keyUpEvents, true);
-        }
-    }
-
-    /** All the following methods are used to handle the keyboard and touch events */
-
-    keyDownEvents = (event) => {
-        switch (event.key) {
+        
+        /** All the following methods are used to handle the keyboard and touch events */
+        
+        keyDownEvents = (event) => {
+            switch (event.key) {
             case "w":
                 this.keyPressed.w = true;
                 break;
-            case "s":
-                this.keyPressed.s = true;
-                break;  
-            case "a":
+                case "s":
+                    this.keyPressed.s = true;
+                    break;  
+                    case "a":
                 this.keyPressed.a = true;
                 break;
             case "d":
                 this.keyPressed.d = true;
                 break; 
+            }
         }
-    }
-
-    keyUpEvents = (event) => {
-        switch (event.key) {
+        
+        keyUpEvents = (event) => {
+            switch (event.key) {
             case "w":
                 this.keyPressed.w = false;
                 break;
@@ -189,11 +195,6 @@ export class Roomba {
         if (x >= 178 && y >= 356 && x <= 199 && y <= 380) this.keyPressed.d = false;
     }
 
-    //This method is used to check if the roomba is inside the bounds a given area
-    checkBounds(boundsCoords) {
-        return this.position.x + this.speed.x <= boundsCoords.x1 && this.position.x + this.speed.x >= boundsCoords.x2 &&
-            this.position.z + this.speed.z <= boundsCoords.z1 && this.position.z + this.speed.z >= boundsCoords.z2;
-    }
     
 }
 

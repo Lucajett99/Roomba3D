@@ -112,12 +112,8 @@ function loadTextureFromImg(imageSrc) {
 
 
 
-
-
-
-
 //export variables for the depth texture
-var depthFramebuffer, depthTextureSize, depthTexture, unusedTexture;
+var depthFramebuffer, depthTextureSize, depthTexture;
 /**
  * This function is used to create the depth framebuffer
  */
@@ -140,7 +136,6 @@ function createTextureLight(){
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-
 	depthFramebuffer = gl.createFramebuffer();
 	gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
 	gl.framebufferTexture2D(
@@ -148,38 +143,8 @@ function createTextureLight(){
 		gl.DEPTH_ATTACHMENT,  // attachment point
 		gl.TEXTURE_2D,        // texture target
 		depthTexture,         // texture
-		0);                   // mip level
-
-	// --------------------------------------------------
-	// UNUSED TEXTURE
-
-	// create a color texture of the same size as the depth texture
-	// see article why this is needed_
-	unusedTexture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_2D, unusedTexture);
-	gl.texImage2D(
-		gl.TEXTURE_2D,
-		0,
-		gl.RGBA,
-		depthTextureSize,
-		depthTextureSize,
-		0,
-		gl.RGBA,
-		gl.UNSIGNED_BYTE,
-		null,
-		);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-	// attach it to the framebuffer
-	gl.framebufferTexture2D(
-		gl.FRAMEBUFFER,        // target
-		gl.COLOR_ATTACHMENT0,  // attachment point
-		gl.TEXTURE_2D,         // texture target
-		unusedTexture,         // texture
-		0);                    // mip level
+		0                     // mip level
+    );                   
 }
 
 
@@ -240,7 +205,6 @@ function parseOBJ(text) {
 	      objNormals.push(parts.map(parseFloat));
 	    },
 	    vt(parts) {
-	      //should check for missing v and extra w?
 	      objTexcoords.push(parts.map(parseFloat));
 	    },
 	    f(parts) {
